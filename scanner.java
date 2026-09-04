@@ -30,7 +30,7 @@ public class scanner{
         }
         System.out.println("EOF");
     }
-}
+
 public static void checkNumber(String word){
     String tempWord = "";
     for(int i = 0; i < word.length();i++){
@@ -52,8 +52,16 @@ public static void checkNumber(String word){
     }
 }
 public static void checkID(String word){
-
+    for (int i = 0; i < word.length(); i++) {
+                char ch = word.charAt(i);
+                if (Character.isLetter(ch) || Character.isDigit(ch)) {
+                    System.out.print(ch);
+                }
+        }
+        System.out.println();
 }
 public static void checkSpecial(char c){
+
+}
 
 }
