@@ -5,7 +5,7 @@
  * Instructor [Dennis Brylow]
  * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, christian.guzmanrivas@marquette.edu]
  */
-import java.util.Scanner;
+//import java.util.Scanner;
 
 enum TokenType {
 
@@ -67,19 +67,12 @@ enum TokenType {
         ERROR
     }
 
-    enum State {
-    START,
-    BUILDING,
-    ACCEPT,
-    ERROR
-    }
-public class scanner{
-    private static State state = State.START;
-    private static TokenType tokenType = null;
+public class Scanner{
+
 
     public static void main(String[] args){
         String word;
-        Scanner reader = new Scanner(System.in);
+        java.util.Scanner reader = new java.util.Scanner(System.in);
 
         while(reader.hasNext()){
             word = reader.next();
@@ -87,13 +80,10 @@ public class scanner{
             while (word.length() > 0) {
                 char firstChar = word.charAt(0);
                 if(Character.isLetter(firstChar)){
-                    state = State.BUILDING;
                     word = checkID(word);
                 }else if(Character.isDigit(firstChar)){
-                    state = State.BUILDING;
                     word = checkNumber(word);
                 }else{
-                    state = State.BUILDING;
                     word = checkSpecial(word);
                 }    
             }                       
@@ -119,18 +109,15 @@ public static String checkNumber(String word){
                         (nextChar >= 'a' && nextChar <= 'f') ||
                         (nextChar >= 'A' && nextChar <= 'F')) {
 
-                        tempWord = tempWord + c;
                         i++;
                     } else {
-                        state = State.ERROR;
-                        System.out.println(state.ERROR);
+                        System.out.println("ERROR");
                         tempWord = "";
                         return "";
                         }
                 }
             } else {
-                state = State.ERROR;
-                System.out.println(state.ERROR);
+                System.out.println("ERROR");
                 tempWord = "";
                 return "";
             }
