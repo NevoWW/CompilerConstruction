@@ -138,6 +138,12 @@ public static String checkID(String word){
                     return word.substring(i);
                 }
         }
+        boolean test = checkForReserveWord(tempWord);
+        if(test){
+            tempWord = tempWord.toUpperCase();
+            System.out.println(tempWord);
+            return "";
+        }
         System.out.println("ID(" + tempWord + ")");
         return "";
 }
@@ -157,6 +163,10 @@ public static String checkSpecial(String word){
             } else if (c == '-') {
 
                 System.out.println("MINUS");
+
+            }else if (c == ';') {
+
+                System.out.println("SEMICOLON");
 
             } else if (c == '*') {
 
@@ -194,11 +204,11 @@ public static String checkSpecial(String word){
 
             } else if (c == '<') {
 
-                System.out.println("LESS_THAN");
+                System.out.println("LESSTHAN");
 
             } else if (c == '>') {
 
-                System.out.println("GREATER_THAN");
+                System.out.println("GREATERTHAN");
 
             } else if (c == '=') {
 
@@ -248,23 +258,95 @@ public static String checkSpecial(String word){
 
             } else if (c == '.') {
 
-                System.out.println("DOT");
+                System.out.println("PERRIOD");
 
+            }else{
+                System.out.println("Illegal token.");
             }
         
 
         return word.substring(index);
     }
 
-public static String checkForReserveWord(String word){
+public static boolean checkForReserveWord(String word){
+    boolean testForReserve = false;
+    String localWord = word;
+    int indexOfReserveWord = 0;
+    switch(localWord){
 
-    String LocalWord = word;
-    switch(LocalWord){
+        case "if":
+            testForReserve = true;
+            indexOfReserveWord = 2;
+            break;
+        case "int":
+            testForReserve = true;
+            indexOfReserveWord = 3;
+            break;
+        case "new":
+            testForReserve = true;
+            indexOfReserveWord = 3;
+            break;
+        case "class":
+            testForReserve = true;
+            indexOfReserveWord = 4;
+            break;
+        case "public":
+            testForReserve = true;
+            indexOfReserveWord = 6;
+            break;
+        case "static":
+            testForReserve = true;
+            indexOfReserveWord = 6;
+            break;
+        case "void":
+            testForReserve = true;
+            indexOfReserveWord = 4;
+            break;
+        case "main":
+            testForReserve = true;
+            indexOfReserveWord = 4;
+            break;
+        case "String":
+            testForReserve = true;
+            indexOfReserveWord = 6;
+            break;
+        case "extends":
+            testForReserve = true;
+            indexOfReserveWord = 7;
+            break;
+        case "return":
+            testForReserve = true;
+            indexOfReserveWord = 6;
+            break;
+        case "boolean":
+            testForReserve = true;
+            indexOfReserveWord = 7;
+            break;
+        case "else":
+            testForReserve = true;
+            indexOfReserveWord = 4;
+            break;
 
-       
-
+        case "while":
+            testForReserve = true;
+            indexOfReserveWord = 5;
+            break;
+        case "length":
+            testForReserve = true;
+            indexOfReserveWord = 6;
+            break;
+        case "true":
+            testForReserve = true;
+            indexOfReserveWord = 4;
+            break;
+        case "this":
+            testForReserve = true;
+            indexOfReserveWord = 4;
+            break;
+        default:
+            return testForReserve;
     }
-    return "Not Here Yet";
+    return testForReserve;
 }
 
 public static String checkForHex(String word){
