@@ -5,7 +5,7 @@
  * Instructor [Dennis Brylow]
  * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, christian.guzmanrivas@marquette.edu]
  */
-//import java.util.Scanner;
+import java.util.Scanner;
 
 enum TokenType {
 
@@ -67,12 +67,19 @@ enum TokenType {
         ERROR
     }
 
-public class Scanner{
-
+    enum State {
+    START,
+    BUILDING,
+    ACCEPT,
+    ERROR
+    }
+public class scanner{
+    private static State state = State.START;
+    private static TokenType tokenType = null;
 
     public static void main(String[] args){
         String word;
-        java.util.Scanner reader = new java.util.Scanner(System.in);
+        Scanner reader = new Scanner(System.in);
 
         while(reader.hasNext()){
             word = reader.next();
@@ -80,10 +87,13 @@ public class Scanner{
             while (word.length() > 0) {
                 char firstChar = word.charAt(0);
                 if(Character.isLetter(firstChar)){
+                    state = State.BUILDING;
                     word = checkID(word);
                 }else if(Character.isDigit(firstChar)){
+                    state = State.BUILDING;
                     word = checkNumber(word);
                 }else{
+                    state = State.BUILDING;
                     word = checkSpecial(word);
                 }    
             }                       
@@ -98,29 +108,40 @@ public static String checkNumber(String word){
         char c = word.charAt(i);
 
         if(Character.isDigit(c)){
-
             tempWord = tempWord+c;
 
         }else if(Character.isLetter(c)){
             if(tempWord.equals("0") && (c == 'x' || c == 'X')){
                 tempWord = tempWord+c;
-                i++;
-                String hexWord = checkForHex(word.substring(i));
-                return hexWord;
+                if (i+1 < word.length()){
+                    char nextChar = word.charAt(i+1);
+                    if((nextChar >= '0' && nextChar <= '9') ||
+                        (nextChar >= 'a' && nextChar <= 'f') ||
+                        (nextChar >= 'A' && nextChar <= 'F')) {
 
+                        tempWord = tempWord + c;
+                        i++;
+                    } else {
+                        state = State.ERROR;
+                        System.out.println(state.ERROR);
+                        tempWord = "";
+                        return "";
+                        }
+                }
             } else {
-                System.out.println("Invalid character in number.");
+                state = State.ERROR;
+                System.out.println(state.ERROR);
                 tempWord = "";
                 return "";
             }
             
         }else{
             // Add tempword to array before entering the method
-            System.out.println("INTEGAR_LITERAL(" + tempWord + ")");
+            System.out.println(tempWord);
             return word.substring(i);
         }
     }
-    System.out.println("INTEGAR_LITERAL(" + tempWord + ")");
+    System.out.println(tempWord);
     return "";
 }
 
@@ -133,20 +154,17 @@ public static String checkID(String word){
                 if (Character.isLetterOrDigit(c) || c == '_') {
                     tempWord = tempWord + c;
                 }else {
-                    checkForReserveWord(tempWord);
                     System.out.println("ID(" + tempWord + ")");
                     return word.substring(i);
                 }
         }
-        System.out.println("ID(" + tempWord + ")");
+        System.out.println(tempWord);
         return "";
 }
 
 
 public static String checkSpecial(String word){
-    int i = 0;
-    int index = 1;
-    
+    for (int i = 0; i < word.length(); i++) {
 
             char c = word.charAt(i);
 
@@ -170,7 +188,7 @@ public static String checkSpecial(String word){
 
                 if (i + 1 < word.length() && word.charAt(i + 1) == '&') {
                     System.out.println("AND");
-                    index++;
+                    i++;
                 } else {
                     System.out.println("BITWISE_AND");
                 }
@@ -179,7 +197,7 @@ public static String checkSpecial(String word){
 
                 if (i + 1 < word.length() && word.charAt(i + 1) == '|') {
                     System.out.println("OR");
-                    index++;
+                    i++;
                 } else {
                     System.out.println("BITWISE_OR");
                 }
@@ -204,18 +222,18 @@ public static String checkSpecial(String word){
 
                 if (i + 1 < word.length() && word.charAt(i + 1) == '=') {
                     System.out.println("EQUAL");
-                    index++;
+                    i++;
                 } else {
-                    System.out.println("ASSIGN");
+                    System.out.println("INVALID CHARACTER");
                 }
 
             } else if (c == '!') {
 
                 if (i + 1 < word.length() && word.charAt(i + 1) == '=') {
-                    System.out.println("NOTEQUAL");
-                    index++;
+                    System.out.println("NOT_EQUAL");
+                    i++;
                 } else {
-                    System.out.println("BANG");
+                    System.out.println("NOT");
                 }
 
             } else if (c == '(') {
@@ -251,46 +269,8 @@ public static String checkSpecial(String word){
                 System.out.println("DOT");
 
             }
-        
-
-        return word.substring(index);
-    }
-
-public static String checkForReserveWord(String word){
-
-    String LocalWord = word;
-    switch(LocalWord){
-
-       
-
-    }
-    return "Not Here Yet";
-}
-
-public static String checkForHex(String word){
-    String tempWord = "";
-    int i =0;
-    for(i = 0; i < word.length();i++){
-        char nextChar = word.charAt(i);
-        if((nextChar >= '0' && nextChar <= '9') ||
-            (nextChar >= 'a' && nextChar <= 'f') ||
-            (nextChar >= 'A' && nextChar <= 'F')) {
-            
-            tempWord = tempWord + nextChar;
-        }else if(Character.isLetter(nextChar)){
-            
-            System.out.println("Invalid character in hex number.");
-            tempWord = "";
-            return "";
-            
-        }else{
-            System.out.println("HEXADECIMAL_LITERAL(0x" + tempWord + ")");
-            return word.substring(i);
         }
+
+        return word.substring(1);
     }
-    System.out.println("HEXADECIMAL_LITERAL(0x" + tempWord + ")");
-    return word.substring(i);
-}
-
-
 }
