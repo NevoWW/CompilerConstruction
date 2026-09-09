@@ -170,11 +170,11 @@ public static String checkSpecial(String word){
 
             } else if (c == '*') {
 
-                System.out.println("MULTIPLY");
+                System.out.println("STAR");
 
             } else if (c == '/') {
 
-                System.out.println("DIVIDE");
+                System.out.println("FORWARDSLASH");
 
             } else if (c == '&') {
 
@@ -182,7 +182,7 @@ public static String checkSpecial(String word){
                     System.out.println("AND");
                     index++;
                 } else {
-                    System.out.println("BITWISE_AND");
+                    System.out.println("BWAND");
                 }
 
             } else if (c == '|') {
@@ -191,7 +191,7 @@ public static String checkSpecial(String word){
                     System.out.println("OR");
                     index++;
                 } else {
-                    System.out.println("BITWISE_OR");
+                    System.out.println("BWOR");
                 }
 
             } else if (c == '^') {
@@ -200,7 +200,7 @@ public static String checkSpecial(String word){
 
             } else if (c == '~') {
 
-                System.out.println("BITWISE_NOT");
+                System.out.println("COMP");
 
             } else if (c == '<') {
 
@@ -238,11 +238,11 @@ public static String checkSpecial(String word){
 
             } else if (c == '[') {
 
-                System.out.println("LBRACKET");
+                System.out.println("LSQUARE");
 
             } else if (c == ']') {
 
-                System.out.println("RBRACKET");
+                System.out.println("RSQUARE");
 
             } else if (c == '{') {
 
@@ -258,7 +258,7 @@ public static String checkSpecial(String word){
 
             } else if (c == '.') {
 
-                System.out.println("PERRIOD");
+                System.out.println("PERIOD");
 
             }else{
                 System.out.println("Illegal token.");
