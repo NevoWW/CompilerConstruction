@@ -5,9 +5,12 @@
  * Instructor [Dennis Brylow]
  * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, christian.guzmanrivas@marquette.edu]
  */
-import java.util.Scanner;
 
+<<<<<<< Updated upstream
 enum TokenType {
+=======
+import java.util.Scanner;
+>>>>>>> Stashed changes
 
         // Logical binary operators
         AND,                // &&
@@ -101,6 +104,7 @@ public class scanner{
         System.out.println("EOF");
     }
 
+<<<<<<< Updated upstream
 public static String checkNumber(String word){
     String tempWord = "";
     for(int i = 0; i < word.length();i++){
@@ -161,6 +165,34 @@ public static String checkID(String word){
         System.out.println(tempWord);
         return "";
 }
+=======
+    public static void checkNumber(String word){
+        String tempWord = "";
+        for(int i = 0; i < word.length();i++){
+            char c = word.charAt(i);
+            if(Character.isDigit(c)){
+                tempWord = tempWord+c;
+            }else if(Character.isLetter(c)){
+                System.out.println("Invalid number");
+                return;
+            }else{
+                // Add tempword to array before entering the method
+                checkSpecial(c);
+                c = word.charAt(i++);
+                if(Character.isLetter(c)){
+                    String sendingWord = word.substring(i);
+                    checkID(sendingWord);
+                }
+            }
+        }
+    }
+    public static void checkID(String word){
+
+    }
+    public static void checkSpecial(char c){
+
+    }
+>>>>>>> Stashed changes
 
 
 public static String checkSpecial(String word){
