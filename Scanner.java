@@ -116,11 +116,11 @@ public static String checkNumber(String word){
             
         }else{
             // Add tempword to array before entering the method
-            System.out.println("INTEGAR_LITERAL(" + tempWord + ")");
+            System.out.println("INTEGER_LITERAL(" + tempWord + ")");
             return word.substring(i);
         }
     }
-    System.out.println("INTEGAR_LITERAL(" + tempWord + ")");
+    System.out.println("INTEGER_LITERAL(" + tempWord + ")");
     return "";
 }
 
