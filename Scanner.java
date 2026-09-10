@@ -98,8 +98,13 @@ public static String checkNumber(String word){
         char c = word.charAt(i);
 
         if(Character.isDigit(c)){
-
             tempWord = tempWord+c;
+            if(tempWord.equals("0") && !(word.charAt(i+1) == 'X' || word.charAt(i+1) == 'x')){
+                i++;
+                String octalString = checkOctalNumber(word.substring(i));
+                return octalString;
+            }
+            
 
         }else if(Character.isLetter(c)){
             if(tempWord.equals("0") && (c == 'x' || c == 'X')){
@@ -256,8 +261,24 @@ public static String checkSpecial(String word){
 
                 System.out.println("COMMA");
 
-            } else if (c == '.') {
+            } else if (c == '"') {
+                String tempWord = "";
+                char tempCh = ' ';
+                
 
+                for(i= 1;i < word.length();i++){
+                    tempCh = word.charAt(i);
+                    if(tempCh == '"'){
+                        System.out.println("STRING_LITERAL(" + tempWord + ")");
+                        index = i;
+                        return word.substring(index);
+                    }
+                    tempWord = tempWord + tempCh;
+                }
+                
+
+            } else if (c == '.') {
+ 
                 System.out.println("PERIOD");
 
             }else{
@@ -363,7 +384,7 @@ public static String checkForHex(String word){
             
             System.out.println("Invalid character in hex number.");
             tempWord = "";
-            return "";
+            return tempWord;
             
         }else{
             System.out.println("HEXADECIMAL_LITERAL(0x" + tempWord + ")");
@@ -371,8 +392,31 @@ public static String checkForHex(String word){
         }
     }
     System.out.println("HEXADECIMAL_LITERAL(0x" + tempWord + ")");
-    return word.substring(i);
+    return "";
 }
 
+public static String checkOctalNumber(String word){
+    char c;
+    String tempWord = "";
+    int i = 0;
+    for(i = 0; i < word.length();i++){
+        c = word.charAt(i);
+        if((c >= '0' && c <= '7')) {
+            tempWord += c;
+        }else if((Character.isLetter(c)) || c == '8' || c == '9'){
+            
+            System.out.println("Invalid character in octal number.");
+            tempWord = "";
+            return tempWord;
+            
+        }else{
+            System.out.println("OCTAL_LITERAL(0" + tempWord + ")");
+            return word.substring(i);
+        }
+    }
+    System.out.println("OCTAL_LITERAL(0" + tempWord + ")");
+    return "";
 
+
+}
 }
