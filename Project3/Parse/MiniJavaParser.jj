@@ -37,13 +37,21 @@ TOKEN :
 	  < "class" >
 	| < "public" >
 	| < "static" >
+	| < "true" >
+	| < "false" >
 
 	/* Types. */
 	| < "void" >
 	| < "int" >
+	| < "boolean" >
 
 	/* Operators. */
 	| < "." >
+	| < "=" >
+	| < "+" >
+	| < "-" >
+	| < "*" >
+	| < "/" >
 
 	/* Grouping tokens. */
 	| < "{" >
@@ -169,6 +177,8 @@ Absyn.Type BaseType() :
 {
 	name = <ID>	{ return new Absyn.IdentifierType(name.toString()); }
 	| <"int">	{ return new Absyn.IntegerType(); }
+	| <"boolean">	{ return new Absyn.BooleanType(); }
+
 }
 
 Absyn.Stmt Statement() :
@@ -196,8 +206,11 @@ Absyn.Expr Expression() :
 {
 	Token t;
 }
-{
-        t=<STRING> { return new Absyn.StringLiteral(t.toString()); }
+{		
+		t=<"true"> { return new Absyn.TrueExpr(); }
+		| t=<"false"> { return new Absyn.FalseExpr(); }
+        | t=<STRING> { return new Absyn.StringLiteral(t.toString()); }
 		| t=<INT> { return new Absyn.IntegerLiteral(new Integer(t.toString())); }
+
 }
 

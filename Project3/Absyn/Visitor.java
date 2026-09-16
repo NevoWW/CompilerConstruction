@@ -15,6 +15,9 @@ public interface Visitor
     public void visit(Formal ast);
     public void visit(IdentifierType ast);
     public void visit(IntegerType ast);
+    public void visit(BooleanType ast);
+    public void visit(TrueExpr ast);
+    public void visit(FalseExpr ast);
     public void visit(IntegerLiteral ast);
     public void visit(MethodDecl ast);
     public void visit(Program ast);

@@ -104,13 +104,30 @@ public class PrintVisitor implements Visitor
 
     public void visit(IdentifierType ast)
     {
-		out.print("IdentifierType(" + ast.id + ")");
+			out.print("IdentifierType(" + ast.id + ")");
     }
 
 	public void visit(IntegerType ast)
     {
 		out.print("IntegerType");
     }
+
+	public void visit(BooleanType ast)
+	{
+		out.print("BooleanType");
+	}
+
+	public void visit(TrueExpr ast)
+	{
+		indent();
+		out.print("TrueExpr");
+	}
+
+	public void visit(FalseExpr ast)
+	{
+		indent();
+		out.print("FalseExpr");
+	}
 
     public void visit(VarDecl ast)
     {
