@@ -129,6 +129,40 @@ public class PrintVisitor implements Visitor
 		out.print("FalseExpr");
 	}
 
+	public void visit(ThisExpr ast)
+	{
+		indent();
+		out.print("ThisExpr");
+		indent();
+		out.print(ast.id);
+	}
+
+	public void visit(FieldExpr ast)
+	{
+		indent();
+		out.print("FieldExpr(");
+		ast.target.accept(this);
+		out.print(" " + ast.field + ")");
+	}
+
+	public void visit(NullExpr ast)
+	{
+		indent();
+		out.print("NullExpr");
+	}
+
+	public void visit(AssignableExpr ast)
+	{
+		indent();
+		out.print("AssignableExpr");
+	}
+
+	public void visit(IdentifierExpr ast)
+	{
+		indent();
+		out.print("IdentifierExpr(" + ast.id + ")");
+	}
+
     public void visit(VarDecl ast)
     {
 		indent();

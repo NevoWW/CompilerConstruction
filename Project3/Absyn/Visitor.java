@@ -18,7 +18,12 @@ public interface Visitor
     public void visit(BooleanType ast);
     public void visit(TrueExpr ast);
     public void visit(FalseExpr ast);
+    public void visit(NullExpr ast);
     public void visit(IntegerLiteral ast);
+    public void visit(IdentifierExpr ast);
+    public void visit(AssignableExpr ast);
+    public void visit(FieldExpr ast);
+    public void visit(ThisExpr ast);
     public void visit(MethodDecl ast);
     public void visit(Program ast);
     public void visit(StringLiteral ast);

@@ -39,6 +39,8 @@ TOKEN :
 	| < "static" >
 	| < "true" >
 	| < "false" >
+	| < "this" >
+	| < "null" >
 
 	/* Types. */
 	| < "void" >
@@ -156,7 +158,7 @@ Absyn.VarDecl VarDeclaration() :
 	Absyn.Expr init = null;
 }
 {
-	type = Type() name = <ID> [ " = " init = Expression() ] ";"
+	type = Type() name = <ID> [ "=" init = Expression() ] ";"
 	{ return new Absyn.VarDecl(type, name.toString(), init); }
 }
 
@@ -175,9 +177,9 @@ Absyn.Type BaseType() :
 	Token name;
 }
 {
-	name = <ID>	{ return new Absyn.IdentifierType(name.toString()); }
-	| <"int">	{ return new Absyn.IntegerType(); }
-	| <"boolean">	{ return new Absyn.BooleanType(); }
+	name = <"boolean">	{ return new Absyn.BooleanType(); }
+	| name=<"int">	{ return new Absyn.IntegerType(); }
+	| name=<ID>	{ return new Absyn.IdentifierType(name.toString()); }
 
 }
 
@@ -205,12 +207,17 @@ Absyn.XinuCallStmt XinuCallStatement() :
 Absyn.Expr Expression() :
 {
 	Token t;
+	Token name;
 }
-{		
-		t=<"true"> { return new Absyn.TrueExpr(); }
-		| t=<"false"> { return new Absyn.FalseExpr(); }
-        | t=<STRING> { return new Absyn.StringLiteral(t.toString()); }
+{
+		t=<"("> Expression() <")"> 
+		| t=<ID> { return new Absyn.IdentifierExpr(t.toString()); }
 		| t=<INT> { return new Absyn.IntegerLiteral(new Integer(t.toString())); }
+        | t=<STRING> { return new Absyn.StringLiteral(t.toString()); }
+		| t=<"true"> { return new Absyn.TrueExpr(); }
+		| t=<"false"> { return new Absyn.FalseExpr(); }
+		| t=<"this"> "." name=<ID> { return new Absyn.ThisExpr(name.toString()); }
+		| t=<"null"> { return new Absyn.NullExpr(); }
+
 
 }
-
