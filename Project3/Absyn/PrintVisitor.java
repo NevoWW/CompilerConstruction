@@ -107,6 +107,11 @@ public class PrintVisitor implements Visitor
 		out.print("IdentifierType(" + ast.id + ")");
     }
 
+	public void visit(IntegerType ast)
+    {
+		out.print("IntegerType");
+    }
+
     public void visit(VarDecl ast)
     {
 		indent();

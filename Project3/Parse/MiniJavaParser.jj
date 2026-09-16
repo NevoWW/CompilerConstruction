@@ -40,6 +40,7 @@ TOKEN :
 
 	/* Types. */
 	| < "void" >
+	| < "int" >
 
 	/* Operators. */
 	| < "." >
@@ -147,7 +148,7 @@ Absyn.VarDecl VarDeclaration() :
 	Absyn.Expr init = null;
 }
 {
-	type = Type() name = <ID> [ "=" init = Expression() ] ";"
+	type = Type() name = <ID> [ " = " init = Expression() ] ";"
 	{ return new Absyn.VarDecl(type, name.toString(), init); }
 }
 
@@ -167,6 +168,7 @@ Absyn.Type BaseType() :
 }
 {
 	name = <ID>	{ return new Absyn.IdentifierType(name.toString()); }
+	| <"int">	{ return new Absyn.IntegerType(); }
 }
 
 Absyn.Stmt Statement() :
@@ -196,5 +198,6 @@ Absyn.Expr Expression() :
 }
 {
         t=<STRING> { return new Absyn.StringLiteral(t.toString()); }
+		| t=<INT> { return new Absyn.IntegerLiteral(new Integer(t.toString())); }
 }
 
