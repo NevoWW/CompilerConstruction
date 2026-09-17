@@ -17,6 +17,10 @@ public interface Visitor
     public void visit(IntegerType ast);
     public void visit(BooleanType ast);
     public void visit(TrueExpr ast);
+    public void visit(AddExpr ast);
+    public void visit(SubExpr ast);
+    public void visit(MulExpr ast);
+    public void visit(DivExpr ast);
     public void visit(FalseExpr ast);
     public void visit(NullExpr ast);
     public void visit(IntegerLiteral ast);
@@ -29,4 +33,5 @@ public interface Visitor
     public void visit(StringLiteral ast);
     public void visit(VarDecl ast);
     public void visit(XinuCallStmt ast);
+    
 }

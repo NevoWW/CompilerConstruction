@@ -203,21 +203,68 @@ Absyn.XinuCallStmt XinuCallStatement() :
 		( "," arg = Expression()  { args.add(arg); } )* ]
 	")" ";" { return new Absyn.XinuCallStmt(method.toString(), args); }
 }
+//<VARDECL> := <E>
 
-Absyn.Expr Expression() :
+Absyn.Expr Expression():
+{
+	Absyn.Expr e;
+}
+{
+	e = AdditiveExpr() {return e;}
+
+}
+//<E>:= <MulE> + <MulE>
+//   || <Mule> - <MulE>
+Absyn.Expr AdditiveExpr():
+{
+	Absyn.Expr e1,e2;
+
+}
+{
+	e1 = MultiplicativeExpr() 
+	(
+	 "+" e2 = MultiplicativeExpr() { e1 = new Absyn.AddExpr(e1,e2);}
+	|"-" e2 = MultiplicativeExpr() { e1 = new Absyn.SubExpr(e1,e2);}
+	)*
+	{return e1;}
+   
+
+}
+//<MulE> := <Base> * <Base>
+//       || <Base> / <Base>
+Absyn.Expr MultiplicativeExpr():
+{
+	Absyn.Expr e1,e2;
+
+}
+{
+	e1 = BaseExpr() 
+	(
+	 "*" e2 = BaseExpr() { e1 = new Absyn.MulExpr(e1,e2);}
+	|"/" e2 = BaseExpr() { e1 = new Absyn.DivExpr(e1,e2);}
+	)*
+	{return e1;}
+   
+
+}
+//Base := <ID>
+//     || <INT>
+//     || <STRING>
+//     || "true"
+//     || "false"
+//     || "this"
+//     || "null"
+Absyn.Expr BaseExpr():
 {
 	Token t;
 	Token name;
 }
 {
-		t=<"("> Expression() <")"> 
-		| t=<ID> { return new Absyn.IdentifierExpr(t.toString()); }
+		  t=<ID> { return new Absyn.IdentifierExpr(t.toString()); }
 		| t=<INT> { return new Absyn.IntegerLiteral(new Integer(t.toString())); }
         | t=<STRING> { return new Absyn.StringLiteral(t.toString()); }
 		| t=<"true"> { return new Absyn.TrueExpr(); }
 		| t=<"false"> { return new Absyn.FalseExpr(); }
 		| t=<"this"> "." name=<ID> { return new Absyn.ThisExpr(name.toString()); }
 		| t=<"null"> { return new Absyn.NullExpr(); }
-
-
 }
