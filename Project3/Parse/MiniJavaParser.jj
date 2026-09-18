@@ -285,24 +285,25 @@ Absyn.Expr MultiplicativeExpr():
 	Absyn.Expr e1,e2;
 }
 {
-	e1 = NotExpr() 
+	e1 = UnaryExpr() 
 	(
-	 "*" e2 = NotExpr() { e1 = new Absyn.MulExpr(e1,e2);}
-	|"/" e2 = NotExpr() { e1 = new Absyn.DivExpr(e1,e2);}
+	 "*" e2 = UnaryExpr() { e1 = new Absyn.MulExpr(e1,e2);}
+	|"/" e2 = UnaryExpr() { e1 = new Absyn.DivExpr(e1,e2);}
 	)*
 	{return e1;}
 }
-Absyn.Expr NotExpr():
+Absyn.Expr UnaryExpr():
 {
 	Absyn.Expr e1;
 }
 {
-	<"!"> e1 = BaseExpr() {e1 = new Absyn.NotExpr(e1);}
-	| e1 = BaseExpr()
+	<"-"> e1 = BaseExpr() {e1 = new Absyn.NegExpr(e1);}
+	|<"!"> e1 = BaseExpr() {e1 = new Absyn.NotExpr(e1);}
+	| e1 = BaseExpr() {}
 	{return e1;}
 }
 
-*/
+
 //Base := <ID>
 //     || <INT>
 //     || <STRING>

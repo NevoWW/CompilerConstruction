@@ -306,4 +306,13 @@ public class PrintVisitor implements Visitor
 		indentCount--;
 		out.print(")");
 	}
+	public void visit(NegExpr ast){
+
+		indent();
+		out.print("NegExpr(");
+		indentCount++;
+		ast.Expr1.accept(this);
+		indentCount--;
+		out.print(")");
+	}
 }
