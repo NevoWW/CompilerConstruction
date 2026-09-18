@@ -1,6 +1,6 @@
 class Hello {
     public static void main (String[] a) {
-    Xinu.print(5 < 6);
+    int x =5+(3*3);
     
     }
 }

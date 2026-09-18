@@ -301,15 +301,8 @@ Absyn.Expr NotExpr():
 	| e1 = BaseExpr()
 	{return e1;}
 }
-// Absyn.Expr ParenExpr():
-// {
-// 	Absyn.Expr e1;
-// }
-// {
-// 	e1 = "(" e1 = BaseExpr() ")" {e1 = new Absyn.NotExpr(e1);}
-// 	|e1 = BaseExpr() {return e1;}
-// 	{return e1;}
-// }
+
+*/
 //Base := <ID>
 //     || <INT>
 //     || <STRING>
@@ -319,11 +312,12 @@ Absyn.Expr NotExpr():
 //     || "null"
 Absyn.Expr BaseExpr():
 {
-	Token t;
-	Token name;
+	Token t, name;
+	Absyn.Expr e1;
 }
 {
-		  t=<ID> { return new Absyn.IdentifierExpr(t.toString()); }
+		t=<"("> e1 = Expression() <")"> { return e1; }
+		| t=<ID> { return new Absyn.IdentifierExpr(t.toString()); }
 		| t=<INT> { return new Absyn.IntegerLiteral(new Integer(t.toString())); }
         | t=<STRING> { return new Absyn.StringLiteral(t.toString()); }
 		| t=<"true"> { return new Absyn.TrueExpr(); }
