@@ -294,13 +294,15 @@ Absyn.Expr MultiplicativeExpr():
 }
 Absyn.Expr UnaryExpr():
 {
-	Absyn.Expr e1;
+    Absyn.Expr e1;
 }
 {
-	<"-"> e1 = BaseExpr() {e1 = new Absyn.NegExpr(e1);}
-	|<"!"> e1 = BaseExpr() {e1 = new Absyn.NotExpr(e1);}
-	| e1 = BaseExpr() {}
-	{return e1;}
+    (
+        <"-"> e1 = UnaryExpr() {e1 = new Absyn.NegExpr(e1);}
+      | <"!"> e1 = UnaryExpr() {e1 = new Absyn.NotExpr(e1);}
+      | e1 = BaseExpr()
+    )
+    {return e1;}
 }
 
 
