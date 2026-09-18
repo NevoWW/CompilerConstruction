@@ -32,7 +32,6 @@ SKIP :
 
 TOKEN :
 {
-
 	/* Reserved words. */
 	  < "class" >
 	| < "public" >
@@ -41,6 +40,7 @@ TOKEN :
 	| < "false" >
 	| < "this" >
 	| < "null" >
+	| < "!" >
 
 	/* Types. */
 	| < "void" >
@@ -185,7 +185,6 @@ Absyn.Type BaseType() :
 	name = <"boolean">	{ return new Absyn.BooleanType(); }
 	| name=<"int">	{ return new Absyn.IntegerType(); }
 	| name=<ID>	{ return new Absyn.IdentifierType(name.toString()); }
-
 }
 
 Absyn.Stmt Statement() :
@@ -209,14 +208,17 @@ Absyn.XinuCallStmt XinuCallStatement() :
 	")" ";" { return new Absyn.XinuCallStmt(method.toString(), args); }
 }
 //<VARDECL> := <E>
-
 Absyn.Expr Expression():
 {
 	Absyn.Expr e;
 }
 {
+<<<<<<< Updated upstream
 	e = OrExpr() {return e;}
 
+=======
+	e = AdditiveExpr() {return e;}
+>>>>>>> Stashed changes
 }
 
 Absyn.Expr OrExpr():
@@ -277,7 +279,6 @@ Absyn.Expr RelationalExpr():
 Absyn.Expr AdditiveExpr():
 {
 	Absyn.Expr e1,e2;
-
 }
 {
 	e1 = MultiplicativeExpr() 
@@ -286,26 +287,38 @@ Absyn.Expr AdditiveExpr():
 	|"-" e2 = MultiplicativeExpr() { e1 = new Absyn.SubExpr(e1,e2);}
 	)*
 	{return e1;}
-   
-
 }
 //<MulE> := <Base> * <Base>
 //       || <Base> / <Base>
 Absyn.Expr MultiplicativeExpr():
 {
 	Absyn.Expr e1,e2;
-
 }
 {
-	e1 = BaseExpr() 
+	e1 = NotExpr() 
 	(
-	 "*" e2 = BaseExpr() { e1 = new Absyn.MulExpr(e1,e2);}
-	|"/" e2 = BaseExpr() { e1 = new Absyn.DivExpr(e1,e2);}
+	 "*" e2 = NotExpr() { e1 = new Absyn.MulExpr(e1,e2);}
+	|"/" e2 = NotExpr() { e1 = new Absyn.DivExpr(e1,e2);}
 	)*
 	{return e1;}
-   
-
 }
+Absyn.Expr NotExpr():
+{
+	Absyn.Expr e1;
+}
+{
+	<"!"> e1 = BaseExpr() {e1 = new Absyn.NotExpr(e1);}
+	{return e1;}
+}
+// Absyn.Expr ParenExpr():
+// {
+// 	Absyn.Expr e1;
+// }
+// {
+// 	e1 = "(" e1 = BaseExpr() ")" {e1 = new Absyn.NotExpr(e1);}
+// 	|e1 = BaseExpr() {return e1;}
+// 	{return e1;}
+// }
 //Base := <ID>
 //     || <INT>
 //     || <STRING>

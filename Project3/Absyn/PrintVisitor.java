@@ -297,4 +297,13 @@ public class PrintVisitor implements Visitor
 		indentCount--;
 		out.print(")");
 	}
+	public void visit(NotExpr ast){
+
+		indent();
+		out.print("NotExpr(");
+		indentCount++;
+		ast.Expr1.accept(this);
+		indentCount--;
+		out.print(")");
+	}
 }

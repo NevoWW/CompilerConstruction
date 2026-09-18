@@ -23,6 +23,7 @@ public interface Visitor
     public void visit(GreaterExpr ast);
     public void visit(LesserExpr ast);
     public void visit(AddExpr ast);
+    public void visit(NotExpr ast);
     public void visit(SubExpr ast);
     public void visit(MulExpr ast);
     public void visit(DivExpr ast);
