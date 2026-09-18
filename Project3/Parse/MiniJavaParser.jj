@@ -213,12 +213,7 @@ Absyn.Expr Expression():
 	Absyn.Expr e;
 }
 {
-<<<<<<< Updated upstream
 	e = OrExpr() {return e;}
-
-=======
-	e = AdditiveExpr() {return e;}
->>>>>>> Stashed changes
 }
 
 Absyn.Expr OrExpr():
