@@ -206,6 +206,57 @@ public class PrintVisitor implements Visitor
 		out.print(")");
     }
 
+
+	public void visit(OrExpr ast)
+	{
+		indent();
+		out.print("OrExpr(");
+		indentCount++;
+		ast.Expr1.accept(this);
+		ast.Expr2.accept(this);
+		indentCount--;
+		out.print(")");
+	}
+	public void visit(AndExpr ast)
+	{
+		indent();
+		out.print("AndExpr(");
+		indentCount++;
+		ast.Expr1.accept(this);
+		ast.Expr2.accept(this);
+		indentCount--;
+		out.print(")");
+	}
+	public void visit(EqualExpr ast)
+	{
+		indent();
+		out.print("EqualExpr(");
+		indentCount++;
+		ast.Expr1.accept(this);
+		ast.Expr2.accept(this);
+		indentCount--;
+		out.print(")");
+	}
+	public void visit(GreaterExpr ast)
+	{
+		indent();
+		out.print("GreaterExpr(");
+		indentCount++;
+		ast.Expr1.accept(this);
+		ast.Expr2.accept(this);
+		indentCount--;
+		out.print(")");
+	}
+	public void visit(LesserExpr ast)
+	{
+		indent();
+		out.print("LesserExpr(");
+		indentCount++;
+		ast.Expr1.accept(this);
+		ast.Expr2.accept(this);
+		indentCount--;
+		out.print(")");
+	}
 	public void visit(AddExpr ast)
 	{
 		indent();

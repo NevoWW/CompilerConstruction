@@ -54,6 +54,11 @@ TOKEN :
 	| < "-" >
 	| < "*" >
 	| < "/" >
+	| < ">" >
+	| < "<" >
+	| < "==" >
+	| < "&&" >
+	| < "||" >
 
 	/* Grouping tokens. */
 	| < "{" >
@@ -210,9 +215,63 @@ Absyn.Expr Expression():
 	Absyn.Expr e;
 }
 {
-	e = AdditiveExpr() {return e;}
+	e = OrExpr() {return e;}
 
 }
+
+Absyn.Expr OrExpr():
+{
+	Absyn.Expr e1,e2;
+
+}
+{
+	e1 = AndExpr() 
+	(
+	 "||" e2 = AndExpr() { e1 = new Absyn.OrExpr(e1,e2);}
+	)*
+	{return e1;}
+}
+
+Absyn.Expr AndExpr():
+{
+	Absyn.Expr e1,e2;
+
+}
+{
+	e1 = EqualExpr() 
+	(
+	 "&&" e2 = EqualExpr() { e1 = new Absyn.AndExpr(e1,e2);}
+	)*
+	{return e1;}
+}
+
+Absyn.Expr EqualExpr():
+{
+	Absyn.Expr e1,e2;
+
+}
+{
+	e1 = RelationalExpr() 
+	(
+	 "==" e2 = RelationalExpr() { e1 = new Absyn.EqualExpr(e1,e2);}
+	)*
+	{return e1;}
+}
+
+Absyn.Expr RelationalExpr():
+{
+	Absyn.Expr e1,e2;
+
+}
+{
+	e1 = AdditiveExpr() 
+	(
+	 ">" e2 = AdditiveExpr() { e1 = new Absyn.GreaterExpr(e1,e2);}
+	|"<" e2 = AdditiveExpr() { e1 = new Absyn.LesserExpr(e1,e2);}
+	)*
+	{return e1;}
+}
+
 //<E>:= <MulE> + <MulE>
 //   || <Mule> - <MulE>
 Absyn.Expr AdditiveExpr():
