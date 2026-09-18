@@ -54,11 +54,6 @@ TOKEN :
 	| < "-" >
 	| < "*" >
 	| < "/" >
-	| < ">" >
-	| < "<" >
-	| < "==" >
-	| < "&&" >
-	| < "||" >
 
 	/* Grouping tokens. */
 	| < "{" >
@@ -303,6 +298,7 @@ Absyn.Expr NotExpr():
 }
 {
 	<"!"> e1 = BaseExpr() {e1 = new Absyn.NotExpr(e1);}
+	| e1 = BaseExpr()
 	{return e1;}
 }
 // Absyn.Expr ParenExpr():
