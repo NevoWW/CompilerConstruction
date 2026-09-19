@@ -83,6 +83,7 @@ TOKEN :
 	| < "String" > 
 	| < "Thread" > 
 	| < "Xinu" >
+	| < "new" >
 }
 
 
@@ -352,11 +353,18 @@ Absyn.Expr BaseExpr():
 {
 	Token t, name;
 	Absyn.Expr e1, arg;
+	Absyn.Type type2;
 	LinkedList<Absyn.Expr> args3;
 }
 {
-
-		 t=<"("> e1 = Expression() <")"> { return e1; }
+		t=<"new"> type2 = Type() <"("> <")"> { return new Absyn.NewObjectExpr(type2); }
+		
+		| t=<"Xinu"> <"."> name = <ID>
+			<"(">{args3 = new LinkedList<Absyn.Expr>();} 
+			[ arg = Expression() { args3.add(arg); }
+			( <","> arg = Expression() { args3.add(arg); } )* ]
+			<")"> { return new Absyn.XinuCallExpr(name.toString(), args3); }
+		| t=<"("> e1 = Expression() <")"> { return e1; }
 		| t=<ID> { return new Absyn.IdentifierExpr(t.toString()); }
 		| t=<INT> { return new Absyn.IntegerLiteral(new Integer(t.toString())); }
         | t=<STRING> { return new Absyn.StringLiteral(t.toString()); }

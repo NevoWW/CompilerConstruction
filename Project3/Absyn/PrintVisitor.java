@@ -197,6 +197,34 @@ public class PrintVisitor implements Visitor
 		out.print(")");
     }
 
+	public void visit(NewArrayExpr ast)
+	{
+		indent();
+		out.print("NewArrayExpr(");
+		ast.type.accept(this);
+		visit(ast.dim);
+		out.print(")");
+	}
+
+	public void visit(NewObjectExpr ast)
+	{
+		indent();
+		out.print("NewObjectExpr(");
+		ast.type.accept(this);
+		out.print(")");
+	}
+
+	public void visit(XinuCallExpr ast)
+	{
+		indent();
+		out.print("XinuCallExpr(");
+		indentCount++;
+		out.print(ast.method);
+		visit(ast.args);
+		indentCount--;
+		out.print(")");
+	}
+
     public void visit(XinuCallStmt ast)
     {
 		indent();

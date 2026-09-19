@@ -41,6 +41,9 @@ public interface Visitor
     public void visit(Program ast);
     public void visit(StringLiteral ast);
     public void visit(VarDecl ast);
+    public void visit(NewObjectExpr ast);
+    public void visit(NewArrayExpr ast);
+    public void visit(XinuCallExpr ast);
     public void visit(XinuCallStmt ast);
     
 }
