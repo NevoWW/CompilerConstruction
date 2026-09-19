@@ -234,6 +234,17 @@ public class PrintVisitor implements Visitor
 		out.print(")");
     }
 
+	public void visit(WhileStmt ast)
+    {
+		indent();
+		out.print("WhileStmt(");
+		indentCount++;
+		ast.test.accept(this);;
+		ast.body.accept(this);;
+		indentCount--;
+		out.print(")");
+    }
+
     public void visit(IntegerLiteral ast)
     {
 		indent();

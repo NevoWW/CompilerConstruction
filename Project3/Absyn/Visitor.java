@@ -45,5 +45,6 @@ public interface Visitor
     public void visit(NewArrayExpr ast);
     public void visit(XinuCallExpr ast);
     public void visit(XinuCallStmt ast);
+    public void visit(WhileStmt ast);
     
 }

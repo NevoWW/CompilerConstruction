@@ -1,6 +1,6 @@
 class Hello {
     public static void main (String[] a) {
-    int x = new int();
+    while(3) Xinu.a(4);
     
     }
 }

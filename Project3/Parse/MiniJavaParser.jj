@@ -48,7 +48,7 @@ TOKEN :
 	| < "false" >
 	| < "this" >
 	| < "null" >
-	| < "!" >
+	| < "while" >
 
 	/* Types. */
 	| < "void" >
@@ -67,6 +67,7 @@ TOKEN :
 	| < "==" >
 	| < ">" >
 	| < "<" >
+	| < "!" >
 
 	/* Grouping tokens. */
 	| < "{" >
@@ -202,6 +203,16 @@ Absyn.Stmt Statement() :
 }
 {
 	stmt = XinuCallStatement()	{ return stmt; }
+	|stmt = WhileCallStatement() {return stmt; }
+}
+
+Absyn.WhileStmt WhileCallStatement() :
+{
+	Absyn.Expr test;
+	Absyn.Stmt body;
+}
+{
+	<"while"> <"("> test = Expression() <")"> body = Statement() { return new Absyn.WhileStmt(test, body); }
 }
 
 Absyn.XinuCallStmt XinuCallStatement() :
