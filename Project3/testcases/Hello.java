@@ -1,6 +1,6 @@
 class Hello {
     public static void main (String[] a) {
-    while(3) Xinu.a(4);
+    if(3) while(4) Xinu.a(3); else Xinu.b(5);
     
     }
 }

@@ -49,6 +49,8 @@ TOKEN :
 	| < "this" >
 	| < "null" >
 	| < "while" >
+	| < "if" >
+	| < "else" >
 
 	/* Types. */
 	| < "void" >
@@ -204,6 +206,20 @@ Absyn.Stmt Statement() :
 {
 	stmt = XinuCallStatement()	{ return stmt; }
 	|stmt = WhileCallStatement() {return stmt; }
+	|stmt = IfCallStatement() {return stmt; }
+}
+
+Absyn.IfStmt IfCallStatement() :
+{
+	Absyn.Expr test;
+	Absyn.Stmt thenStm;
+	Absyn.Stmt elseStm = null;
+}
+{
+	<"if"> <"("> test = Expression() <")"> thenStm = Statement()
+	[ <"else"> elseStm = Statement() ]
+	
+	{ return new Absyn.IfStmt(test, thenStm, elseStm); }
 }
 
 Absyn.WhileStmt WhileCallStatement() :

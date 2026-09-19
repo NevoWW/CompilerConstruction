@@ -46,5 +46,6 @@ public interface Visitor
     public void visit(XinuCallExpr ast);
     public void visit(XinuCallStmt ast);
     public void visit(WhileStmt ast);
+    public void visit(IfStmt ast);
     
 }
