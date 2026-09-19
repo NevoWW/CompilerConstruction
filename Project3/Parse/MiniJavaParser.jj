@@ -204,9 +204,20 @@ Absyn.Stmt Statement() :
 	Absyn.Stmt stmt;
 }
 {
-	stmt = XinuCallStatement()	{ return stmt; }
+	stmt = BlockCallStatement() {return stmt; }
+	|stmt = XinuCallStatement()	{ return stmt; }
 	|stmt = WhileCallStatement() {return stmt; }
 	|stmt = IfCallStatement() {return stmt; }
+}
+
+Absyn.BlockStmt BlockCallStatement() :
+{
+	Absyn.Stmt stmt;
+	LinkedList<Absyn.Stmt> stmts = new LinkedList<Absyn.Stmt>();
+}
+{
+	"{" ( stmt = Statement()  { stmts.add(stmt); } )*
+	"}"{ return new Absyn.BlockStmt(stmts); }
 }
 
 Absyn.IfStmt IfCallStatement() :

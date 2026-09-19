@@ -234,6 +234,16 @@ public class PrintVisitor implements Visitor
 		out.print(")");
     }
 
+	public void visit(BlockStmt ast)
+    {
+		indent();
+		out.print("BlockStmt(");
+		indentCount++;
+		visit(ast.stmts);
+		indentCount--;
+		out.print(")");
+    }
+
 	public void visit(WhileStmt ast)
     {
 		indent();
