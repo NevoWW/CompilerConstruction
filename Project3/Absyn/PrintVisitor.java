@@ -133,8 +133,6 @@ public class PrintVisitor implements Visitor
 	{
 		indent();
 		out.print("ThisExpr");
-		indent();
-		out.print(ast.id);
 	}
 
 	public void visit(ArrayExpr ast)

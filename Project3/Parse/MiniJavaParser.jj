@@ -357,19 +357,26 @@ Absyn.Expr BaseExpr():
 	LinkedList<Absyn.Expr> args3;
 }
 {
-		t=<"new"> type2 = Type() <"("> <")"> { return new Absyn.NewObjectExpr(type2); }
-		
-		| t=<"Xinu"> <"."> name = <ID>
+		<"new"> type2 = BaseType() 
+		(
+			<"("> <")"> { return new Absyn.NewObjectExpr(type2); }
+ 
+			| <"["> arg = Expression() <"]"> 
+				{args3 = new LinkedList<Absyn.Expr>(); args3.add(arg); }
+				( <"["> <"]"> {args3.add(null);} )*
+				{ return new Absyn.NewArrayExpr(type2, args3); }
+		)
+		| <"Xinu"> <"."> name = <ID>
 			<"(">{args3 = new LinkedList<Absyn.Expr>();} 
 			[ arg = Expression() { args3.add(arg); }
 			( <","> arg = Expression() { args3.add(arg); } )* ]
 			<")"> { return new Absyn.XinuCallExpr(name.toString(), args3); }
-		| t=<"("> e1 = Expression() <")"> { return e1; }
+		| <"("> e1 = Expression() <")"> { return e1; }
 		| t=<ID> { return new Absyn.IdentifierExpr(t.toString()); }
 		| t=<INT> { return new Absyn.IntegerLiteral(new Integer(t.toString())); }
         | t=<STRING> { return new Absyn.StringLiteral(t.toString()); }
 		| t=<"true"> { return new Absyn.TrueExpr(); }
 		| t=<"false"> { return new Absyn.FalseExpr(); }
-		| t=<"this"> { return new Absyn.ThisExpr(t.toString()); }
+		| t=<"this"> { return new Absyn.ThisExpr(); }
 		| t=<"null"> { return new Absyn.NullExpr(); }
 }
