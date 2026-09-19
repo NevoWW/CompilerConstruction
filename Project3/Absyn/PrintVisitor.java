@@ -137,12 +137,33 @@ public class PrintVisitor implements Visitor
 		out.print(ast.id);
 	}
 
+	public void visit(ArrayExpr ast)
+	{
+		indent();
+		out.print("ArrayExpr(");
+		ast.target.accept(this);
+		ast.index.accept(this);
+		out.print(")");
+	}
+
 	public void visit(FieldExpr ast)
 	{
 		indent();
 		out.print("FieldExpr(");
 		ast.target.accept(this);
+		indent();
 		out.print(" " + ast.field + ")");
+	}
+
+	public void visit(CallExpr ast)
+	{
+		indent();
+		out.print("CallExpr(");
+		ast.target.accept(this);
+		indent();
+		out.print(" " + ast.method);
+		visit(ast.args);
+		out.print(")");
 	}
 
 	public void visit(NullExpr ast)

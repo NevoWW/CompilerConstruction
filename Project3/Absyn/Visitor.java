@@ -34,6 +34,8 @@ public interface Visitor
     public void visit(IdentifierExpr ast);
     public void visit(AssignableExpr ast);
     public void visit(FieldExpr ast);
+    public void visit(ArrayExpr ast);
+    public void visit(CallExpr ast);
     public void visit(ThisExpr ast);
     public void visit(MethodDecl ast);
     public void visit(Program ast);

@@ -1,6 +1,14 @@
 /* Copyright (C) 2007, 2013, Marquette University.  All rights reserved. */
 /* 2013 Jan 30 : Includes Xinu.* external calls and Concurrency syntax.  */
 
+/**
+ * COSC 4400 - Project #3
+ * Scanner accepts input from user
+ * @authors [Aleksandro Zhaka, Christian Guzman ]
+ * Instructor [Dennis Brylow]
+ * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, chr>
+ */
+
 PARSER_BEGIN(MiniJavaParser)
   package Parse;
   import java.util.LinkedList;
@@ -54,6 +62,11 @@ TOKEN :
 	| < "-" >
 	| < "*" >
 	| < "/" >
+	| < "&&" >
+	| < "||" >
+	| < "==" >
+	| < ">" >
+	| < "<" >
 
 	/* Grouping tokens. */
 	| < "{" >
@@ -219,7 +232,7 @@ Absyn.Expr OrExpr():
 {
 	e1 = AndExpr() 
 	(
-	 "||" e2 = AndExpr() { e1 = new Absyn.OrExpr(e1,e2);}
+	 <"||"> e2 = AndExpr() { e1 = new Absyn.OrExpr(e1,e2);}
 	)*
 	{return e1;}
 }
@@ -232,7 +245,7 @@ Absyn.Expr AndExpr():
 {
 	e1 = EqualExpr() 
 	(
-	 "&&" e2 = EqualExpr() { e1 = new Absyn.AndExpr(e1,e2);}
+	 <"&&"> e2 = EqualExpr() { e1 = new Absyn.AndExpr(e1,e2);}
 	)*
 	{return e1;}
 }
@@ -245,7 +258,7 @@ Absyn.Expr EqualExpr():
 {
 	e1 = RelationalExpr() 
 	(
-	 "==" e2 = RelationalExpr() { e1 = new Absyn.EqualExpr(e1,e2);}
+	 <"=="> e2 = RelationalExpr() { e1 = new Absyn.EqualExpr(e1,e2);}
 	)*
 	{return e1;}
 }
@@ -258,8 +271,8 @@ Absyn.Expr RelationalExpr():
 {
 	e1 = AdditiveExpr() 
 	(
-	 ">" e2 = AdditiveExpr() { e1 = new Absyn.GreaterExpr(e1,e2);}
-	|"<" e2 = AdditiveExpr() { e1 = new Absyn.LesserExpr(e1,e2);}
+	 <">"> e2 = AdditiveExpr() { e1 = new Absyn.GreaterExpr(e1,e2);}
+	|<"<"> e2 = AdditiveExpr() { e1 = new Absyn.LesserExpr(e1,e2);}
 	)*
 	{return e1;}
 }
@@ -273,8 +286,8 @@ Absyn.Expr AdditiveExpr():
 {
 	e1 = MultiplicativeExpr() 
 	(
-	 "+" e2 = MultiplicativeExpr() { e1 = new Absyn.AddExpr(e1,e2);}
-	|"-" e2 = MultiplicativeExpr() { e1 = new Absyn.SubExpr(e1,e2);}
+	 <"+"> e2 = MultiplicativeExpr() { e1 = new Absyn.AddExpr(e1,e2);}
+	|<"-"> e2 = MultiplicativeExpr() { e1 = new Absyn.SubExpr(e1,e2);}
 	)*
 	{return e1;}
 }
@@ -287,8 +300,8 @@ Absyn.Expr MultiplicativeExpr():
 {
 	e1 = UnaryExpr() 
 	(
-	 "*" e2 = UnaryExpr() { e1 = new Absyn.MulExpr(e1,e2);}
-	|"/" e2 = UnaryExpr() { e1 = new Absyn.DivExpr(e1,e2);}
+	 <"*"> e2 = UnaryExpr() { e1 = new Absyn.MulExpr(e1,e2);}
+	|<"/"> e2 = UnaryExpr() { e1 = new Absyn.DivExpr(e1,e2);}
 	)*
 	{return e1;}
 }
@@ -300,9 +313,31 @@ Absyn.Expr UnaryExpr():
     (
         <"-"> e1 = UnaryExpr() {e1 = new Absyn.NegExpr(e1);}
       | <"!"> e1 = UnaryExpr() {e1 = new Absyn.NotExpr(e1);}
-      | e1 = BaseExpr()
+      | e1 = PostfixExpr()
     )
     {return e1;}
+}
+
+Absyn.Expr PostfixExpr():
+{
+    Absyn.Expr e1, arg;
+	Token t;
+	LinkedList<Absyn.Expr> args2;
+}
+{
+    e1 = BaseExpr()
+	(
+		<"."> t = <ID>
+		(
+			<"(">{args2 = new LinkedList<Absyn.Expr>();} 
+				[ arg = Expression() { args2.add(arg); }
+				( <","> arg = Expression() { args2.add(arg); } )* ]
+				<")"> { e1 = new Absyn.CallExpr(e1, t.toString(), args2); }
+			| { e1 = new Absyn.FieldExpr(e1, t.toString()); }
+		)
+		| <"["> arg = Expression() <"]"> { e1 = new Absyn.ArrayExpr(e1, arg); }
+	)*
+	{return e1;}
 }
 
 
@@ -316,15 +351,17 @@ Absyn.Expr UnaryExpr():
 Absyn.Expr BaseExpr():
 {
 	Token t, name;
-	Absyn.Expr e1;
+	Absyn.Expr e1, arg;
+	LinkedList<Absyn.Expr> args3;
 }
 {
-		t=<"("> e1 = Expression() <")"> { return e1; }
+
+		 t=<"("> e1 = Expression() <")"> { return e1; }
 		| t=<ID> { return new Absyn.IdentifierExpr(t.toString()); }
 		| t=<INT> { return new Absyn.IntegerLiteral(new Integer(t.toString())); }
         | t=<STRING> { return new Absyn.StringLiteral(t.toString()); }
 		| t=<"true"> { return new Absyn.TrueExpr(); }
 		| t=<"false"> { return new Absyn.FalseExpr(); }
-		| t=<"this"> "." name=<ID> { return new Absyn.ThisExpr(name.toString()); }
+		| t=<"this"> { return new Absyn.ThisExpr(t.toString()); }
 		| t=<"null"> { return new Absyn.NullExpr(); }
 }
