@@ -1,0 +1,19 @@
+Program(
+ AbstractList(
+  ClassDecl(Hello null
+   AbstractList()
+   AbstractList(
+    MethodDecl(public_static_void main
+     AbstractList(
+      Formal(ArrayType(IdentifierType(String)) a))
+     AbstractList()
+     AbstractList(
+      BlockStmt(
+       AbstractList(
+        XinuCallStmt(a
+         AbstractList(
+          IntegerLiteral(3)))
+        XinuCallStmt(a
+         AbstractList(
+          IntegerLiteral(3))))))
+     IntegerLiteral(0))))))

@@ -166,7 +166,25 @@ Absyn.ClassDecl MainClassDeclaration(LinkedList<Absyn.ClassDecl> cl) :
 		return cd;
 	}
 }
+/*
+Absyn.Method MethodDeclaration() :
+{
+	Token arg;
+	Absyn.Type type;	
+}
+{
+	type = Type() arg = <ID> ";" {return ;}
+}
 
+Absyn.FieldDecl FieldDeclaration() :
+{
+	Token arg;
+	Absyn.Type type;	
+}
+{
+	type = Type() arg = <ID> ";" {return ;}
+}
+*/
 // VarDeclaration 	::= 	Type Identifier ( = Expression )? ";"
 Absyn.VarDecl VarDeclaration() :
 {
@@ -208,6 +226,15 @@ Absyn.Stmt Statement() :
 	|stmt = XinuCallStatement()	{ return stmt; }
 	|stmt = WhileCallStatement() {return stmt; }
 	|stmt = IfCallStatement() {return stmt; }
+	|stmt = AssignCallStatement() {return stmt; }
+}
+
+Absyn.AssignStmt AssignCallStatement() :
+{
+	Absyn.Expr arg1, arg2;
+}
+{
+	arg1 = Expression() <"="> arg2 = Expression() <";">{ return new Absyn.AssignStmt((Absyn.AssignableExpr)arg1, arg2); }
 }
 
 Absyn.BlockStmt BlockCallStatement() :

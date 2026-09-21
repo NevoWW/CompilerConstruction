@@ -48,5 +48,6 @@ public interface Visitor
     public void visit(WhileStmt ast);
     public void visit(IfStmt ast);
     public void visit(BlockStmt ast);
+    public void visit(AssignStmt ast);
     
 }
