@@ -166,31 +166,13 @@ Absyn.ClassDecl MainClassDeclaration(LinkedList<Absyn.ClassDecl> cl) :
 		return cd;
 	}
 	//ClassDeclaration	::=	"class" <ID> ( "extends" <ID> )? "{" ( FieldDeclaration | MethodDeclaration )* "}"
-	| "class" <ID> ("extends" <ID> ) "{" (FieldDecleration() | MethodDecl())
-}
-/*
-Absyn.Method MethodDeclaration() :
-{
-	Token arg;
-	Absyn.Type type;	
-}
-{
-	type = Type() arg = <ID> ";" {return ;}
+	| "class" <ID> ("extends" <ID> ) "{" (FieldDecleration() | MethodDeclaration())
 }
 
-<<<<<<< Updated upstream
-Absyn.FieldDecl FieldDeclaration() :
-{
-	Token arg;
-	Absyn.Type type;	
-}
-{
-	type = Type() arg = <ID> ";" {return ;}
-}
-*/
-=======
 
-Absyn.MethodDecl MethodCeclaration():
+
+
+Absyn.MethodDecl MethodDeclaration():
 {
 	boolean synced = false;
 	Absyn.Type type, argsType;
@@ -201,22 +183,30 @@ Absyn.MethodDecl MethodCeclaration():
 	LinkedList<Absyn.VarDecl> locals     = new LinkedList<Absyn.VarDecl>();
 	LinkedList<Absyn.Stmt> stmts         = new LinkedList<Absyn.Stmt>();
 	Absyn.Expr e1;
-	Absyn.Formal formal
+	Absyn.Formal formal;
 }
 {
-	"public" ["synchronized" synced = true;] type = Type() name = <ID>
-	"(" (argsType = Type() arg = <ID>  {formal = new Absyn.Formal(argsType, arg) formals.add(formal)} 
-	[","argsType = Type() arg = <ID>  {formal = new Absyn.Formal(argsType, arg) formals.add(formal)}])* ")" 
+	"public" ["synchronized" {synced = true;}] type = Type() name = <ID>
+	"(" (argsType = Type() arg = <ID>  {formal = new Absyn.Formal(argsType, arg.toString()); formals.add(formal);} 
+	[","argsType = Type() arg = <ID>  {formal = new Absyn.Formal(argsType, arg.toString()); formals.add(formal);}])* ")" 
 	"{" (LOOKAHEAD(VarDeclaration()) var = VarDeclaration()
 		{ locals.add(var); } )*
 	(stmt = Statement() { stmts.add(stmt); } )*
 	"return"  e1 = Expression()";"
-	 "}" {return new Absyn.MethodDecl(type,synced,name,formals,locals,stmts,e1)}
+	 "}" {return new Absyn.MethodDecl(type,synced,name.toString(),formals,locals,stmts,e1);}
+}
+
+Absyn.FieldExpr FieldDecleration():
+{
+	Absyn.Type type;
+	Token name;
+}
+{
+	type = Type() name = <ID> <";">
 }
 //MethodDeclaration	::=	"public" ( "synchronized" )? 
 //Type <ID> "(" ( Type <ID> ( "," Type <ID> )* )? ")" "{" ( VarDeclaration )* ( Statement )* "return" Expression ";" "}" 
 
->>>>>>> Stashed changes
 // VarDeclaration 	::= 	Type Identifier ( = Expression )? ";"
 Absyn.VarDecl VarDeclaration() :
 {
@@ -229,16 +219,6 @@ Absyn.VarDecl VarDeclaration() :
 	{ return new Absyn.VarDecl(type, name.toString(), init); }
 }
 
-Absyn.FieldExpr FieldDecleration():
-{
-	Absyn.FieldExpr e1 = null;
-	Absyn.Type type = null;
-	Absyn.Token name = null;
-
-}
-{
-	type = Type() name = <ID> [ "=" e1 = Expression() ] ";" {return e1;}
-}
 Absyn.Type Type() :
 {
 	Absyn.Type type;
@@ -268,7 +248,6 @@ Absyn.Stmt Statement() :
 	|stmt = XinuCallStatement()	{ return stmt; }
 	|stmt = WhileCallStatement() {return stmt; }
 	|stmt = IfCallStatement() {return stmt; }
-<<<<<<< Updated upstream
 	|stmt = AssignCallStatement() {return stmt; }
 }
 
@@ -278,9 +257,6 @@ Absyn.AssignStmt AssignCallStatement() :
 }
 {
 	arg1 = Expression() <"="> arg2 = Expression() <";">{ return new Absyn.AssignStmt((Absyn.AssignableExpr)arg1, arg2); }
-=======
-	|stmt = AssignStatement() {return stmt;}
->>>>>>> Stashed changes
 }
 
 Absyn.BlockStmt BlockCallStatement() :
