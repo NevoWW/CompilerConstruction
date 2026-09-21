@@ -87,6 +87,9 @@ TOKEN :
 	| < "Thread" > 
 	| < "Xinu" >
 	| < "new" >
+	| < "extends" >
+	| < "synchronized" >
+	| < "return" > 
 }
 
 
@@ -128,7 +131,12 @@ Absyn.Program Goal() :
 	LinkedList<Absyn.ClassDecl> cl = new LinkedList<Absyn.ClassDecl>();
 }
 {
-	MainClassDeclaration(cl) <EOF>
+	
+	MainClassDeclaration(cl) 
+	(
+		ClassDeclaration(cl)
+	)*
+	 <EOF>
 	{ return new Absyn.Program(cl); }
 }
 
@@ -166,7 +174,31 @@ Absyn.ClassDecl MainClassDeclaration(LinkedList<Absyn.ClassDecl> cl) :
 		return cd;
 	}
 	//ClassDeclaration	::=	"class" <ID> ( "extends" <ID> )? "{" ( FieldDeclaration | MethodDeclaration )* "}"
-	| "class" <ID> ("extends" <ID> ) "{" (FieldDecleration() | MethodDeclaration())
+}
+
+Absyn.ClassDecl ClassDeclaration(LinkedList<Absyn.ClassDecl> cl) :
+{
+	Absyn.ClassDecl  cd;
+	Absyn.Stmt stmt;
+	Absyn.MethodDecl var;
+	Token name, name2, arg;
+	LinkedList<Absyn.MethodDecl> methods = new LinkedList<Absyn.MethodDecl>();
+}
+{
+  "class" name = <ID> ["extends" name2 = <ID>]"{"
+  (
+	FieldDeclaration()
+	|var = MethodDeclaration()
+	{methods.add(var);}
+  )*
+  "}"
+	{
+		cd = new Absyn.ClassDecl(name.toString(),
+						null,
+						new LinkedList<Absyn.VarDecl>(), methods);
+		cl.add(cd);
+		return cd;
+	}
 }
 
 
@@ -187,22 +219,28 @@ Absyn.MethodDecl MethodDeclaration():
 }
 {
 	"public" ["synchronized" {synced = true;}] type = Type() name = <ID>
-	"(" (argsType = Type() arg = <ID>  {formal = new Absyn.Formal(argsType, arg.toString()); formals.add(formal);} 
-	[","argsType = Type() arg = <ID>  {formal = new Absyn.Formal(argsType, arg.toString()); formals.add(formal);}])* ")" 
+	"(" 
+	[
+		argsType = Type() arg = <ID>  
+		{formal = new Absyn.Formal(argsType, arg.toString()); formals.add(formal);} 
+		(","argsType = Type() arg = <ID>  
+		{formal = new Absyn.Formal(argsType, arg.toString()); formals.add(formal);})*
+	] 
+	")" 
 	"{" (LOOKAHEAD(VarDeclaration()) var = VarDeclaration()
 		{ locals.add(var); } )*
-	(stmt = Statement() { stmts.add(stmt); } )*
+		(stmt = Statement() { stmts.add(stmt); } )*
 	"return"  e1 = Expression()";"
 	 "}" {return new Absyn.MethodDecl(type,synced,name.toString(),formals,locals,stmts,e1);}
 }
 
-Absyn.FieldExpr FieldDecleration():
+Absyn.FieldExpr FieldDeclaration():
 {
 	Absyn.Type type;
 	Token name;
 }
 {
-	type = Type() name = <ID> <";">
+	type = Type() name = <ID> ";" {return null;}
 }
 //MethodDeclaration	::=	"public" ( "synchronized" )? 
 //Type <ID> "(" ( Type <ID> ( "," Type <ID> )* )? ")" "{" ( VarDeclaration )* ( Statement )* "return" Expression ";" "}" 
