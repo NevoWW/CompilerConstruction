@@ -6,7 +6,7 @@
  * Scanner accepts input from user
  * @authors [Aleksandro Zhaka, Christian Guzman ]
  * Instructor [Dennis Brylow]
- * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, chr>
+ * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, christian.guzmanrivas@marquette.edu>
  */
 
 PARSER_BEGIN(MiniJavaParser)
