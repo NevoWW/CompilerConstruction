@@ -1,12 +1,8 @@
 class Addition {
     public static void main (String[] a) {
-    
-    
+    boolean x = !(!true);
     }
-    public class thing{
-        public int x;
-        public int y = 5;
-    }
+ 
     
 
 }

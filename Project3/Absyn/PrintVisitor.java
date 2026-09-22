@@ -110,20 +110,24 @@ public class PrintVisitor implements Visitor
     {
 		indent();
 		out.print("VoidDecl(");
+		out.print(ast.name);
 		indentCount++;
-		if (null != ast.returnType)
-	    { ast.returnType.accept(this); }
-		else
-	    { out.print("public_static_void"); }
-		if (ast.synced) { out.print(" synchronized"); }
-		out.print(" " + ast.name);
-		visit(ast.params);
         visit(ast.locals);
 		visit(ast.stmts);
-		ast.returnVal.accept(this);
 		indentCount--;
 		out.print(")");
     }
+	public void visit(NotEqExpr ast)
+	{
+		indent();
+		out.print("NotEqExpr(");
+		indentCount++;
+		ast.Expr1.accept(this);
+		ast.Expr2.accept(this);
+		indentCount--;
+		out.print(")");
+
+	}
     
     public void visit(Formal ast)
     {

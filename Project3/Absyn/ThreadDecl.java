@@ -12,10 +12,10 @@ public class ThreadDecl extends ClassDecl
     public String parent;
     public LinkedList<VarDecl> fields;
     public LinkedList<MethodDecl> methods;
-    public ThreadDecl(String name, String parent, 
-		     LinkedList<VarDecl> fields, LinkedList<MethodDecl> methods)
+
+    public ThreadDecl(String name, String parent, LinkedList<VarDecl> fields, LinkedList<MethodDecl> methods)
     {
-		super(name, null, fields, methods);
+		super(name, parent, fields, methods);
 		this.name = name;
 		this.fields = fields;
 		this.methods = methods;

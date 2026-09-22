@@ -31,7 +31,9 @@ TOKEN_MGR_DECLS :
 /****************/
 SKIP :
 {
-	  " " | "\t" | "\n" | "\r" | "\f"
+	  " " | "\t" | "\n" | "\r" | "\f" 
+	  | < "//" (~["\n","\r"])* ("\n" | "\r" | "\r\n")? >
+	  | < "/*" (~["*"])* "*" (("*")* (~["*","/"] (~["*"])*)? "*")* "/" >
 }
 
 /*************************/
@@ -134,8 +136,10 @@ Absyn.Program Goal() :
 	
 	MainClassDeclaration(cl) 
 	(
-		ClassDeclaration(cl)
-		|ThreadDeclaration(cl)
+		LOOKAHEAD(ThreadDeclaration())
+		ThreadDeclaration(cl) 
+		|ClassDeclaration(cl)
+		
 	)*
 	 <EOF>
 	{ return new Absyn.Program(cl); }
@@ -202,27 +206,28 @@ Absyn.ClassDecl ClassDeclaration(LinkedList<Absyn.ClassDecl> cl) :
 	}
 }
 
-Absyn.ClassDecl ThreadDeclaration(LinkedList<Absyn.ClassDecl> cl) :
+Absyn.ThreadDecl ThreadDeclaration(LinkedList<Absyn.ClassDecl> cl) :
 {
-	Absyn.ClassDecl  cd;
-	Absyn.Stmt stmt;
+	Absyn.ThreadDecl  cd;
 	Absyn.MethodDecl var;
 	Token name;
 	LinkedList<Absyn.MethodDecl> methods = new LinkedList<Absyn.MethodDecl>();
+	LinkedList<Absyn.VarDecl> locals = new LinkedList<Absyn.VarDecl>();
+	Absyn.VarDecl var2;
+
 }
 {
   "class" name = <ID> "extends" "Thread" "{"
   (
-	FieldDeclaration()
-	|var = MethodDeclaration()
-	|var = VoidDeclaration() 
-	{methods.add(var);}
+	LOOKAHEAD(FieldDeclaration())
+	var2 = FieldDeclaration(){locals.add(var2);}
+	|LOOKAHEAD(2)
+	var = MethodDeclaration(){methods.add(var);}
+	|var = VoidDeclaration() {methods.add(var);}
   )*
   "}"
 	{
-		cd = new Absyn.ClassDecl(name.toString(),
-						null,
-						new LinkedList<Absyn.VarDecl>(), methods);
+		cd = new Absyn.ThreadDecl(name.toString(),"Thread",locals, methods);
 		cl.add(cd);
 		return cd;
 	}
@@ -258,13 +263,13 @@ Absyn.MethodDecl MethodDeclaration():
 	 "}" {return new Absyn.MethodDecl(type,synced,name.toString(),formals,locals,stmts,e1);}
 }
 
-Absyn.FieldExpr FieldDeclaration():
+Absyn.VarDecl FieldDeclaration():
 {
 	Absyn.Type type;
 	Token name;
 }
 {
-	type = Type() name = <ID> ";" {return null;}
+	type = Type() name = <ID> ";" {return new Absyn.VarDecl(type,name.toString(),null);}
 }
 
 Absyn.VoidDecl VoidDeclaration() :
@@ -425,6 +430,7 @@ Absyn.Expr EqualExpr():
 	e1 = RelationalExpr() 
 	(
 	 <"=="> e2 = RelationalExpr() { e1 = new Absyn.EqualExpr(e1,e2);}
+	| <"!="> e2 = RelationalExpr() { e1 = new Absyn.NotEqExpr(e1,e2);}
 	)*
 	{return e1;}
 }

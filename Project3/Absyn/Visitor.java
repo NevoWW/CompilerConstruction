@@ -51,5 +51,6 @@ public interface Visitor
     public void visit(AssignStmt ast);
     public void visit(VoidDecl ast);
     public void visit(ThreadDecl ast);
+    public void visit(NotEqExpr ast);
     
 }
