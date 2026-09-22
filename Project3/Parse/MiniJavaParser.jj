@@ -186,13 +186,16 @@ Absyn.ClassDecl ClassDeclaration(LinkedList<Absyn.ClassDecl> cl) :
 	Absyn.ClassDecl  cd;
 	Absyn.Stmt stmt;
 	Absyn.MethodDecl var;
+	Absyn.VarDecl var2;
 	Token name, name2, arg;
 	LinkedList<Absyn.MethodDecl> methods = new LinkedList<Absyn.MethodDecl>();
+	LinkedList<Absyn.VarDecl> fields = new LinkedList<Absyn.VarDecl>();
 }
 {
   "class" name = <ID> ["extends" name2 = <ID>]"{"
   (
-	FieldDeclaration()
+	var2 = FieldDeclaration()
+	{fields.add(var2);}
 	|var = MethodDeclaration()
 	{methods.add(var);}
   )*
@@ -200,7 +203,7 @@ Absyn.ClassDecl ClassDeclaration(LinkedList<Absyn.ClassDecl> cl) :
 	{
 		cd = new Absyn.ClassDecl(name.toString(),
 						null,
-						new LinkedList<Absyn.VarDecl>(), methods);
+						fields, methods);
 		cl.add(cd);
 		return cd;
 	}

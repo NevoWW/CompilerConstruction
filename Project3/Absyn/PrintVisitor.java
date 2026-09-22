@@ -188,16 +188,17 @@ public class PrintVisitor implements Visitor
 		out.print(" " + ast.field + ")");
 	}
 
-	public void visit(CallExpr ast)
-	{
+	public void visit(CallExpr ast) {
 		indent();
 		out.print("CallExpr(");
+		indentCount++;
 		ast.target.accept(this);
 		indent();
-		out.print(" " + ast.method);
+		out.print(ast.method);
 		visit(ast.args);
+		indentCount--;
 		out.print(")");
-	}
+}
 
 	public void visit(NullExpr ast)
 	{
@@ -214,6 +215,7 @@ public class PrintVisitor implements Visitor
 	public void visit(IdentifierExpr ast)
 	{
 		indent();
+		
 		out.print("IdentifierExpr(" + ast.id + ")");
 	}
 

@@ -19,6 +19,7 @@ public class ThreadDecl extends ClassDecl
 		this.name = name;
 		this.fields = fields;
 		this.methods = methods;
+    this.parent = parent;
     }
 
     /** Visitor pattern dispatch. */

@@ -1,4 +1,17 @@
+# RUN THE FILE WITH chmod +x test.sh THEN ./test.sh
+#!/bin/bash
+
 echo
 echo Running test 1
-java Parse.main < testcases/
-java Parse.main < ~brylow/cosc4400/Projects/tests/BinarySeach.java
+make clean
+make
+java Parse.Main < ~brylow/cosc4400/Projects/tests/ThreadGood.java > proj.out
+~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/BinarySearch.java > ref.out
+diff -u proj.out ref.out
+rm proj.out ref.out
+make clean
+
+
+
+
+
