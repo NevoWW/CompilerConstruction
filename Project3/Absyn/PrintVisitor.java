@@ -174,9 +174,12 @@ public class PrintVisitor implements Visitor
 	{
 		indent();
 		out.print("ArrayExpr(");
+		indentCount++;
+		indent();
 		ast.target.accept(this);
 		ast.index.accept(this);
 		out.print(")");
+		indentCount--;
 	}
 
 	public void visit(FieldExpr ast)
@@ -240,6 +243,7 @@ public class PrintVisitor implements Visitor
 		visit(ast.dim);
 		out.print(")");
 	}
+	
 
 	public void visit(NewObjectExpr ast)
 	{
