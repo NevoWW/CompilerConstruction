@@ -135,6 +135,7 @@ Absyn.Program Goal() :
 	MainClassDeclaration(cl) 
 	(
 		ClassDeclaration(cl)
+		|ThreadDeclaration(cl)
 	)*
 	 <EOF>
 	{ return new Absyn.Program(cl); }
@@ -201,8 +202,31 @@ Absyn.ClassDecl ClassDeclaration(LinkedList<Absyn.ClassDecl> cl) :
 	}
 }
 
-
-
+Absyn.ClassDecl ThreadDeclaration(LinkedList<Absyn.ClassDecl> cl) :
+{
+	Absyn.ClassDecl  cd;
+	Absyn.Stmt stmt;
+	Absyn.MethodDecl var;
+	Token name;
+	LinkedList<Absyn.MethodDecl> methods = new LinkedList<Absyn.MethodDecl>();
+}
+{
+  "class" name = <ID> "extends" "Thread" "{"
+  (
+	FieldDeclaration()
+	|var = MethodDeclaration()
+	|var = VoidDeclaration() 
+	{methods.add(var);}
+  )*
+  "}"
+	{
+		cd = new Absyn.ClassDecl(name.toString(),
+						null,
+						new LinkedList<Absyn.VarDecl>(), methods);
+		cl.add(cd);
+		return cd;
+	}
+}
 
 Absyn.MethodDecl MethodDeclaration():
 {
@@ -223,7 +247,7 @@ Absyn.MethodDecl MethodDeclaration():
 	[
 		argsType = Type() arg = <ID>  
 		{formal = new Absyn.Formal(argsType, arg.toString()); formals.add(formal);} 
-		(","argsType = Type() arg = <ID>  
+		("," argsType = Type() arg = <ID>  
 		{formal = new Absyn.Formal(argsType, arg.toString()); formals.add(formal);})*
 	] 
 	")" 
@@ -241,6 +265,22 @@ Absyn.FieldExpr FieldDeclaration():
 }
 {
 	type = Type() name = <ID> ";" {return null;}
+}
+
+Absyn.VoidDecl VoidDeclaration() :
+{
+	Absyn.Stmt stmt;
+	Token name;
+	Absyn.VarDecl var;
+	LinkedList<Absyn.VarDecl> locals     = new LinkedList<Absyn.VarDecl>();
+	LinkedList<Absyn.Stmt> stmts         = new LinkedList<Absyn.Stmt>();
+}
+{
+  "public" "void" name = <ID> "(" ")" "{" 
+  (LOOKAHEAD(VarDeclaration()) var = VarDeclaration()
+		{ locals.add(var); } )*
+		(stmt = Statement() { stmts.add(stmt); } )*
+	 "}" {return new Absyn.VoidDecl(null,false,name.toString(),null,locals,stmts,null);}
 }
 //MethodDeclaration	::=	"public" ( "synchronized" )? 
 //Type <ID> "(" ( Type <ID> ( "," Type <ID> )* )? ")" "{" ( VarDeclaration )* ( Statement )* "return" Expression ";" "}" 

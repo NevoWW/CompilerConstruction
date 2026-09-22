@@ -75,10 +75,41 @@ public class PrintVisitor implements Visitor
 		out.print(")");
     }
 
+	public void visit(ThreadDecl ast)
+    {
+		indent();
+		out.print("ThreadDecl(");
+		indentCount++;
+		out.print(ast.name + " " + ast.parent); 
+		visit(ast.fields);
+		visit(ast.methods);
+		indentCount--;
+		out.print(")");
+    }
+
     public void visit(MethodDecl ast)
     {
 		indent();
 		out.print("MethodDecl(");
+		indentCount++;
+		if (null != ast.returnType)
+	    { ast.returnType.accept(this); }
+		else
+	    { out.print("public_static_void"); }
+		if (ast.synced) { out.print(" synchronized"); }
+		out.print(" " + ast.name);
+		visit(ast.params);
+        visit(ast.locals);
+		visit(ast.stmts);
+		ast.returnVal.accept(this);
+		indentCount--;
+		out.print(")");
+    }
+
+	public void visit(VoidDecl ast)
+    {
+		indent();
+		out.print("VoidDecl(");
 		indentCount++;
 		if (null != ast.returnType)
 	    { ast.returnType.accept(this); }
