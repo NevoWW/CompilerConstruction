@@ -175,7 +175,6 @@ public class PrintVisitor implements Visitor
 		indent();
 		out.print("ArrayExpr(");
 		indentCount++;
-		indent();
 		ast.target.accept(this);
 		ast.index.accept(this);
 		out.print(")");

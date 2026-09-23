@@ -183,11 +183,13 @@ Absyn.ClassDecl MainClassDeclaration(LinkedList<Absyn.ClassDecl> cl) :
 
 Absyn.ClassDecl ClassDeclaration(LinkedList<Absyn.ClassDecl> cl) :
 {
+	
 	Absyn.ClassDecl  cd;
 	Absyn.Stmt stmt;
 	Absyn.MethodDecl var;
 	Absyn.VarDecl var2;
-	Token name, name2, arg;
+	Token name,arg;
+	Token name2 = null;
 	LinkedList<Absyn.MethodDecl> methods = new LinkedList<Absyn.MethodDecl>();
 	LinkedList<Absyn.VarDecl> fields = new LinkedList<Absyn.VarDecl>();
 }
@@ -202,7 +204,7 @@ Absyn.ClassDecl ClassDeclaration(LinkedList<Absyn.ClassDecl> cl) :
   "}"
 	{
 		cd = new Absyn.ClassDecl(name.toString(),
-						null,
+						(name2 == null)? null : name2.toString(),
 						fields, methods);
 		cl.add(cd);
 		return cd;
