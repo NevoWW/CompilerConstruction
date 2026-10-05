@@ -14,10 +14,9 @@ public class Main {
 
 	try
 	{
-	Absyn.Program semant = new MiniJavaParser(reader).Goal();
 	PrintWriter writer = new PrintWriter(System.out);
-	Absyn.PrintVisitor pv =	new Absyn.PrintVisitor(writer);
-	pv.visit(semant);
+	Types.PrintTypeVisitor pv =	new Types.PrintTypeVisitor(writer);
+	pv.visit();
 	writer.flush();
 	}
     catch (ParseException p)

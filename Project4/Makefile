@@ -24,7 +24,13 @@ ASTSRC = $(wildcard Absyn/*.java)
 
 PARSESRC = Parse/Main.java $(ASTSRC)
 
-all:	$(PARSEDIR)/$(MJ_PARSER).java $(PARSESRC:.java=.class)
+SYMBOLSRC = $(wildcard Symbol/*.java)
+TYPESSRC = $(wildcard Types/*.java)
+SEMANTSRC = $(wildcard Semant/*.java)
+
+CHECKSRC = $(SYMBOLSRC) $(TYPESSRC) $(SEMANTSRC)
+
+all:	$(PARSEDIR)/$(MJ_PARSER).java $(PARSESRC:.java=.class) $(CHECKSRC:.java=.class)
 
 $(PARSEDIR)/$(MJ_PARSER).java: $(PARSEDIR)/$(MJ_PARSER).jj
 	cd $(PARSEDIR); ${JAVACC} $(MJ_PARSER).jj;
@@ -34,7 +40,7 @@ $(PARSEDIR)/$(MJ_PARSER).java: $(PARSEDIR)/$(MJ_PARSER).jj
 	${JAVAC} ${JFLAGS} $<
 
 clean:
-	rm -f $(PARSESRC:.java=.class) \
+	rm -f $(PARSESRC:.java=.class) $(CHECKSRC:.java=.class) \
 		$(MJ_JAVACCGEN) $(MJ_JAVACCGEN:.java=.class)\
                 '$(PARSEDIR)/$(MJ_PARSER)$$JJCalls.class' \
                 '$(PARSEDIR)/$(MJ_PARSER)$$LookaheadSuccess.class' 
