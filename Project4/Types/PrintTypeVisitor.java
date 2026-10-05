@@ -50,16 +50,26 @@ public class PrintTypeVisitor implements TypeVisitor
     public void visit(CLASS c){
 		
 		
-		out.print("CLASS(" + c.toString());
+		out.print("CLASS(" + c.name);
         indentCount++;
-        indent();
-		out.print(c.parent);            
+        indent(); 
+		out.print(c.parent);          
         indent(); 
 		c.methods.accept(this);
         indent(); 
 		c.fields.accept(this);
+
+        
+        indent();
+        out.print("OBJECT(" + c.instance.myClass.name);
+        indentCount++;
         indent(); 
-		printFullObject(c);
+		c.instance.methods.accept(this);
+        indent(); 
+		c.instance.fields.accept(this);
+        indentCount--;
+        out.print(")");
+
         indentCount--;
         out.print(")");
 	}
