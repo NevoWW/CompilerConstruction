@@ -32,11 +32,31 @@ public class PrintTypeVisitor implements TypeVisitor
     /** Visitor pattern dispatch. */
    
 
-    public void visit(BOOLEAN b) { out.print("BOOLEAN"); }
-    public void visit(INT i)     { out.print("INT"); }
-    public void visit(STRING s)  { out.print("STRING"); }
-    public void visit(VOID v)    { out.print("VOID"); }
-    public void visit(NIL n)     { out.print("NIL"); }
+    public void visit(BOOLEAN b){ 
+
+		out.print("BOOLEAN"); 
+
+		}
+    public void visit(INT i){ 
+
+		out.print("INT");
+
+		}
+    public void visit(STRING s){ 
+
+		out.print("STRING"); 
+
+		}
+    public void visit(VOID v){ 
+
+		out.print("VOID");
+
+		}
+    public void visit(NIL n){ 
+
+		out.print("NIL");
+
+		}
 
     public void visit(ARRAY a){
 		
@@ -114,13 +134,5 @@ public class PrintTypeVisitor implements TypeVisitor
         indentCount--;
         out.print(")");
 	}
-	private void printFullObject(OBJECT o)
-    {
-        out.print("OBJECT(" + o.myClass.name);
-        indentCount++;
-        indent(); o.methods.accept(this);
-        indent(); o.fields.accept(this);
-        indentCount--;
-        out.print(")");
-    }
+
 }
