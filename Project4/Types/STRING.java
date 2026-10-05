@@ -25,6 +25,6 @@ public class STRING extends Type
 	}
 
     /** Visitor pattern dispatch. */
-    public void accept(Visitor v)
+    public void accept(TypeVisitor v)
     {   v.visit(this);   }
 }

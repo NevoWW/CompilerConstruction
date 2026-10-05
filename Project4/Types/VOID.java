@@ -17,6 +17,6 @@ public class VOID extends Type
     {   return (t instanceof VOID);   }
 
     /** Visitor pattern dispatch. */
-    public void accept(Visitor v)
+    public void accept(TypeVisitor v)
     {   v.visit(this);   }
 }

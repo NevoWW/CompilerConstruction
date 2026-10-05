@@ -17,6 +17,6 @@ public class BOOLEAN extends Type
     {   return (t instanceof BOOLEAN);   }
 
     /** Visitor pattern dispatch. */
-    public void accept(Visitor v)
+    public void accept(TypeVisitor v)
     {   v.visit(this);   }
 }

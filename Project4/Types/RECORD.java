@@ -49,6 +49,6 @@ public class RECORD extends Type implements Iterable<FIELD>
     {   return (t == this);   }
 
     /** Visitor pattern dispatch. */
-    public void accept(Visitor v)
+    public void accept(TypeVisitor v)
     {   v.visit(this);   }
 }

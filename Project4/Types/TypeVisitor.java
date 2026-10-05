@@ -5,7 +5,7 @@ package Types;
  * Interface for Visitor Pattern traversals.
  */
 
-public interface Visitor
+public interface TypeVisitor
 {
     /** Visitor pattern dispatch. */
     public void visit(ARRAY a);
