@@ -1,6 +1,7 @@
 package Semant;
 
 import Absyn.ClassDecl;
+import Absyn.MethodDecl;
 import Types.CLASS;
 import Types.OBJECT;
 import Symbol.Symbol;
@@ -11,44 +12,42 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.text.ParseException;
 import java.util.AbstractList;
-
+import java.util.HashSet;
+import java.util.LinkedList;
 
 public class Main {
 
 	public static void checkerPhaseOne(Absyn.Program program){
 		Absyn.Program tempProgram = program;
-		Table symTable = new Table();
+		Table symClassTable = new Table();
 		AbstractList<ClassDecl> programClassList = program.classes;
-		AbstractList<CLASS> classList;
-		AbstractList<OBJECT> ObjectList;
-		Symbol SymbolTranslate;
-		Symbol key;
-		OBJECT tempObject;
+		
 
-		boolean hasDupes = hasDuplicates(programClassList);
-		if(hasDupes ==true){
-			System.out.print("Error");
-			return;
+		
+		for(Absyn.ClassDecl tempClass : programClassList){
+
+			CLASS cl = new CLASS(tempClass.name);
+			OBJECT ob;
+			Symbol key1 = Symbol.symbol(tempClass.name);
+			symClassTable.put(key1,cl);
+			ob = cl.instance;
+			ob.myClass = cl;
 		}
-		for(int i =0; i < programClassList.size();i++){
-			Absyn.ClassDecl tempClass = programClassList.get(i);
-			if(tempClass.parent != null){
-				//add inhertided fields
+		for(Absyn.ClassDecl tempClass : programClassList){
+			Symbol key1 = Symbol.symbol(tempClass.name);
+			CLASS c1 = (CLASS)symClassTable.get(key1);
+			for(MethodDecl method : tempClass.methods){
+
+				c1.methods.put(method.returnType,method.name);
 			}
-			String className = tempClass.name;
-			key = SymbolTranslate.symbol(className);
-			symTable.put(key,tempClass);
-			class = new CLASS(className);
-			classList.put(class);
-			tempObject = class.instance;
-			tempObject.myClass = class;
-			ObjectList.put(tempObject);
+
+
+
 		}
+
 	}
 
-	public static boolean hasDuplicates(AbstractList list){
-		return new HashSet<>(list).size() != list.size();
-	}
+	
     public static void main(String [] args) 
     {
 	InputStreamReader isr =	new InputStreamReader(System.in);
