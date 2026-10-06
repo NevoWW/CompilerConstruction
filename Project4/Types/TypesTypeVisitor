@@ -1,0 +1,12 @@
+package Types;
+import Absyn.*;
+
+public interface TypesTypeVisitor
+{
+    /** Visitor pattern dispatch. */
+    public Types.Type visit(ArrayType ast);
+    public Types.Type visit(IdentifierType ast);
+    public Types.Type visit(IntegerType ast);
+    public Types.Type visit(BooleanType ast);
+
+}

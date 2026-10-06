@@ -15,6 +15,14 @@ import java.util.AbstractList;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+/**
+ * COSC 4400 - Project #3
+ * Scanner accepts input from user
+ * @authors [Aleksandro Zhaka, Christian Guzman ]
+ * Instructor [Dennis Brylow]
+ * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, christian.guzmanrivas@marquette.edu]
+ */
+
 public class Main {
 
 	public static void checkerPhaseOne(Absyn.Program program){
@@ -40,13 +48,8 @@ public class Main {
 
 				c1.methods.put(method.returnType,method.name);
 			}
-
-
-
 		}
-
 	}
-
 	
     public static void main(String [] args) 
     {
@@ -61,7 +64,7 @@ public class Main {
 	// Absyn.PrintVisitor pv =	new Absyn.PrintVisitor(writer);
 	// pv.visit(parse);
 	// writer.flush();
-	ClassTemplateConstruction(parse);
+	checkerPhaseOne(parse);
 	
 	}
     catch (ParseException p)
