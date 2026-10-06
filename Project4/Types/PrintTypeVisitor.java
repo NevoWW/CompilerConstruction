@@ -72,8 +72,7 @@ public class PrintTypeVisitor implements TypeVisitor
 		
 		out.print("CLASS(" + c.name);
         indentCount++;
-        indent(); 
-		out.print(c.parent);          
+		out.print(c.parent);
         indent(); 
 		c.methods.accept(this);
         indent(); 
