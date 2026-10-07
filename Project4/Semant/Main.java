@@ -9,8 +9,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.util.AbstractList;
-import java.util.LinkedList;
 
 /**
  * COSC 4400 - Project #3
@@ -21,6 +19,7 @@ import java.util.LinkedList;
  */
 
 public class Main {
+	public static int errorCount = 0;
 
 	public static void checkerPhaseOne(Program program){
 		Program tempProgram = program;
@@ -33,14 +32,15 @@ public class Main {
 		for(ClassDecl tempClass : program.classes){
 
 			CLASS cl = new CLASS(tempClass.name);
+			duplicateClassCheck(cl, symClassTable);
 			OBJECT ob;
 			Symbol key1 = Symbol.symbol(tempClass.name);
 			symClassTable.put(key1,cl);
 			ob = cl.instance;
 			ob.myClass = cl;
 
-
 		}
+		if(errorCount > 0) return;
 
 		for(ClassDecl tempClass : program.classes){
 			Symbol key1 = Symbol.symbol(tempClass.name);
@@ -107,18 +107,15 @@ public class Main {
 				
 	}
 
-
+	static void duplicateClassCheck(CLASS cl, Table symClassTable){
 		
+		Symbol key = Symbol.symbol(cl.name);
+		if(symClassTable.get(key) != null){
+			System.out.println("ERROR duplicate class: " + cl.name + ": line not available");
+			errorCount++;
+		}
+	}
 
-	// static void duplicateCheck(){
-	// 	for(FIELD f : source){
-	// 		if(destination.get(f.name) != null){
-	// 			System.out.println("Duplicate field: " + f.name);
-	// 			System.exit(-1);
-	// 		}
-	// 	}
-	// }
-	
     public static void main(String [] args) 
     {
 	InputStreamReader isr =	new InputStreamReader(System.in);
