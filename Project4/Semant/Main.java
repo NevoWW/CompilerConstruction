@@ -27,8 +27,6 @@ public class Main {
 		Table symClassTable = new Table();
 
 		CLASS stringClass = new CLASS("String");
-		OBJECT stringObject = stringClass.instance;
-		stringObject.myClass = stringClass;
 		Symbol stringKey = Symbol.symbol("String");
 		symClassTable.put(stringKey,stringClass);
 		
@@ -64,10 +62,10 @@ public class Main {
 				FUNCTION fn = new FUNCTION(method.name,c1.instance, formals, ret);
 				c1.methods.put(fn,method.name);
 			}
-			// for(VarDecl field : tempClass.fields){
-			// 	Types.Type fType = field.type.accept(new TypesPrint(symClassTable));
-			// 	c1.fields.put(fType,field.name);
-			// }
+			for(VarDecl field : tempClass.fields){
+				Types.Type fType = field.type.accept(new TypesPrint(symClassTable));
+				c1.fields.put(fType,field.name);
+			}
 		}
 
 		PrintWriter writer = new PrintWriter(System.out);

@@ -5,8 +5,8 @@ echo
 echo Running test 1
 make clean
 make
-java Semant.Main -c - < testcases/Factorial.java > proj.out
-java Parse.Main < testcases/Factorial.java | ~brylow/cosc4400/Projects/mjchecker -c2 - > ref.out
+java Semant.Main -c - < ~brylow/cosc4400/Projects/tests/BinarySearch.java > proj.out
+java Parse.Main < ~brylow/cosc4400/Projects/tests/BinarySearch.java | ~brylow/cosc4400/Projects/mjchecker -c2 - > ref.out
 diff -u proj.out ref.out
 rm proj.out ref.out
 # echo
