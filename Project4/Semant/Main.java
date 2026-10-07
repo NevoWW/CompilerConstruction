@@ -38,6 +38,8 @@ public class Main {
 			symClassTable.put(key1,cl);
 			ob = cl.instance;
 			ob.myClass = cl;
+
+
 		}
 
 		for(ClassDecl tempClass : program.classes){
@@ -71,17 +73,11 @@ public class Main {
 		for (ClassDecl tempClass : program.classes){
 			Symbol key1 = Symbol.symbol(tempClass.name);
 			CLASS c1 = (CLASS)symClassTable.get(key1);
-			if(tempClass.parent != null){
-				Symbol key2 = Symbol.symbol(tempClass.parent);
-				CLASS c2 = (CLASS)symClassTable.get(key2);
-				c1.parent = c2;
-
-				copy(c2.instance.fields, c1.instance.fields);
-				copy(c2.instance.methods, c1.instance.methods);
-				
-			}
-			copy(c1.fields, c1.instance.fields);
-			copy(c1.methods, c1.instance.methods);
+			RECORD Fsource = new RECORD();
+			RECORD Msource = new RECORD();
+			copy(Fsource,Msource,c1);
+			c1.instance.fields = Fsource;
+			c1.instance.methods = Msource;
 
 		}
 	
@@ -96,12 +92,32 @@ public class Main {
 	}
 
 
-	static void copy(RECORD source, RECORD destination){
-			for(FIELD f : source){
-				destination.put(f.type,f.name);
+	static void copy(RECORD Fsource, RECORD Msource, CLASS cl){
+			if(cl.parent == null){
+				for(FIELD f : cl.fields){
+					if(Fsource.get(f.name) == null) Fsource.put(f.type,f.name);
+				}
+				for(FIELD f : cl.methods){
+					if(Msource.get(f.name) == null) Msource.put(f.type,f.name);
+				}
+				return;
+			}else{
+				copy(Fsource, Msource, cl.parent);
 			}
-			
-		}
+				
+	}
+
+
+		
+
+	// static void duplicateCheck(){
+	// 	for(FIELD f : source){
+	// 		if(destination.get(f.name) != null){
+	// 			System.out.println("Duplicate field: " + f.name);
+	// 			System.exit(-1);
+	// 		}
+	// 	}
+	// }
 	
     public static void main(String [] args) 
     {
@@ -131,3 +147,4 @@ public class Main {
 
 	
 }
+

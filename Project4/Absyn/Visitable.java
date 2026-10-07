@@ -9,4 +9,5 @@ public interface Visitable
 {
     /** Visitor pattern dispatch. */
     public void accept(Visitor v);
+
 }

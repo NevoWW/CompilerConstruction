@@ -14,5 +14,5 @@ public class BooleanType extends Type
 
     public Types.Type accept(Types.TypesTypeVisitor v) {
     return v.visit(this);
-}
+    }
 }

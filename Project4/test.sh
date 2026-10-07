@@ -7,7 +7,7 @@ echo Running test 1
 make clean
 make
 java Semant.Main -c - < ~brylow/cosc4400/Projects/tests/BinarySearch.java > proj.out
-java Parse.Main < ~brylow/cosc4400/Projects/tests/BinarySearch.java | ~brylow/cosc4400/Projects/mjchecker -c - > ref.out
+java Parse.Main < ~brylow/cosc4400/Projects/tests/BinarySearch.java | ~brylow/cosc4400/Projects/mjchecker -c3 - > ref.out
 #java Semant.Main -c3 - < ~brylow/cosc4400/Projects/tests/BinarySearch.java > ref.out
 diff -u proj.out ref.out
 rm proj.out ref.out

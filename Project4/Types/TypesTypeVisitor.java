@@ -8,6 +8,6 @@ public interface TypesTypeVisitor
     public Types.Type visit(IdentifierType ast);
     public Types.Type visit(IntegerType ast);
     public Types.Type visit(BooleanType ast);
-
+    
 
 }
