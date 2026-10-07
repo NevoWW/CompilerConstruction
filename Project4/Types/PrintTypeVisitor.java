@@ -121,7 +121,10 @@ public class PrintTypeVisitor implements TypeVisitor
     public void visit(OBJECT o){
 
 		out.print("OBJECT(" + o.myClass.name + ")");
+
 	}
+
+
     public void visit(RECORD r){
 
 		out.print("RECORD(");

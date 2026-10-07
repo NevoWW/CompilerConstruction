@@ -68,6 +68,24 @@ public class Main {
 			}
 		}
 
+		for (ClassDecl tempClass : program.classes){
+			Symbol key1 = Symbol.symbol(tempClass.name);
+			CLASS c1 = (CLASS)symClassTable.get(key1);
+			if(tempClass.parent != null){
+				Symbol key2 = Symbol.symbol(tempClass.parent);
+				CLASS c2 = (CLASS)symClassTable.get(key2);
+				c1.parent = c2;
+
+				copy(c2.instance.fields, c1.instance.fields);
+				copy(c2.instance.methods, c1.instance.methods);
+				
+			}
+			copy(c1.fields, c1.instance.fields);
+			copy(c1.methods, c1.instance.methods);
+
+		}
+	
+
 		PrintWriter writer = new PrintWriter(System.out);
 		Types.PrintTypeVisitor ptv = new Types.PrintTypeVisitor(writer);   // match its real constructor
 		for (ClassDecl tempClass : program.classes) {
@@ -76,6 +94,14 @@ public class Main {
 		}
 		writer.flush();
 	}
+
+
+	static void copy(RECORD source, RECORD destination){
+			for(FIELD f : source){
+				destination.put(f.type,f.name);
+			}
+			
+		}
 	
     public static void main(String [] args) 
     {

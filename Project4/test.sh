@@ -1,4 +1,5 @@
 # RUN THE FILE WITH chmod +x test.sh THEN ./test.sh
+# Can run with bash tesh.sh
 #!/bin/bash
 
 echo
@@ -6,7 +7,8 @@ echo Running test 1
 make clean
 make
 java Semant.Main -c - < ~brylow/cosc4400/Projects/tests/BinarySearch.java > proj.out
-java Parse.Main < ~brylow/cosc4400/Projects/tests/BinarySearch.java | ~brylow/cosc4400/Projects/mjchecker -c2 - > ref.out
+java Parse.Main < ~brylow/cosc4400/Projects/tests/BinarySearch.java | ~brylow/cosc4400/Projects/mjchecker -c - > ref.out
+#java Semant.Main -c3 - < ~brylow/cosc4400/Projects/tests/BinarySearch.java > ref.out
 diff -u proj.out ref.out
 rm proj.out ref.out
 # echo
