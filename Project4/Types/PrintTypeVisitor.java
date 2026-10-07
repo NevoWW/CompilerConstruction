@@ -67,18 +67,18 @@ public class PrintTypeVisitor implements TypeVisitor
         indentCount--;
         out.print(")");
 	}
-    public void visit(CLASS c){
-		
-		
+
+  public void visit(CLASS c){
+		indent();
 		out.print("CLASS(" + c.name);
         indentCount++;
+        indent();
 		out.print(c.parent);
         indent(); 
 		c.methods.accept(this);
         indent(); 
 		c.fields.accept(this);
 
-        
         indent();
         out.print("OBJECT(" + c.instance.myClass.name);
         indentCount++;
@@ -91,6 +91,7 @@ public class PrintTypeVisitor implements TypeVisitor
 
         indentCount--;
         out.print(")");
+        indent();
 	}
     public void visit(FIELD f){
 

@@ -1,24 +1,28 @@
 package Types;
 import Absyn.*;
+import Symbol.*;
 
 public class TypesPrint implements TypesTypeVisitor
 {
-    public TypesPrint() { }
+	private final Table typeEnv;
+
+    public TypesPrint(Table typeEnv) {this.typeEnv = typeEnv; }
     public Types.Type visit(ArrayType ast) {
-        Types.Type arr = new Types.ARRAY(ast.base.accept(this));
-        return arr;
+        return  new Types.ARRAY(ast.base.accept(this));
     }
     public Types.Type visit(IdentifierType ast) {
-        Types.Type id = new Types.STRING();
-        return id;
+        Symbol key = Symbol.symbol(ast.id);
+        CLASS c = (CLASS)typeEnv.get(key);
+        if(c == null){
+            return new Types.NIL();
+        }
+        return c.instance;
     }
     public Types.Type visit(IntegerType ast) {
-        Types.Type intType = new Types.INT();
-        return intType;
+        return new Types.INT();
     }
     public Types.Type visit(BooleanType ast) {
-        Types.Type boolType = new Types.BOOLEAN();
-        return boolType;
+        return new Types.BOOLEAN();
     }
-    
+
 }

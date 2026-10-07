@@ -1,18 +1,15 @@
 package Semant;
 
-import Absyn.ClassDecl;
-import Absyn.MethodDecl;
-import Types.CLASS;
-import Types.OBJECT;
+import Parse.*;
+import Absyn.*;
+import Types.*;
 import Symbol.Symbol;
 import Symbol.Table;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.text.ParseException;
 import java.util.AbstractList;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 /**
@@ -25,14 +22,17 @@ import java.util.LinkedList;
 
 public class Main {
 
-	public static void checkerPhaseOne(Absyn.Program program){
-		Absyn.Program tempProgram = program;
+	public static void checkerPhaseOne(Program program){
+		Program tempProgram = program;
 		Table symClassTable = new Table();
-		AbstractList<ClassDecl> programClassList = program.classes;
-		
 
+		CLASS stringClass = new CLASS("String");
+		OBJECT stringObject = stringClass.instance;
+		stringObject.myClass = stringClass;
+		Symbol stringKey = Symbol.symbol("String");
+		symClassTable.put(stringKey,stringClass);
 		
-		for(Absyn.ClassDecl tempClass : programClassList){
+		for(ClassDecl tempClass : program.classes){
 
 			CLASS cl = new CLASS(tempClass.name);
 			OBJECT ob;
@@ -41,14 +41,42 @@ public class Main {
 			ob = cl.instance;
 			ob.myClass = cl;
 		}
-		for(Absyn.ClassDecl tempClass : programClassList){
+
+		for(ClassDecl tempClass : program.classes){
 			Symbol key1 = Symbol.symbol(tempClass.name);
 			CLASS c1 = (CLASS)symClassTable.get(key1);
 			for(MethodDecl method : tempClass.methods){
+				Types.Type ret;
+				if(method.returnType == null){
+					ret = new Types.VOID();
+				}
+				else{
+					ret = method.returnType.accept(new TypesPrint(symClassTable));
+				}
+				// c1.methods.put(ret,method.name);
 
-				c1.methods.put(method.returnType,method.name);
+				RECORD formals = new RECORD();
+				for(Formal params : method.params){
+					Types.Type fType = params.type.accept(new TypesPrint(symClassTable));
+					formals.put(fType,params.name);
+				}
+
+				FUNCTION fn = new FUNCTION(method.name,c1.instance, formals, ret);
+				c1.methods.put(fn,method.name);
 			}
+			// for(VarDecl field : tempClass.fields){
+			// 	Types.Type fType = field.type.accept(new TypesPrint(symClassTable));
+			// 	c1.fields.put(fType,field.name);
+			// }
 		}
+
+		PrintWriter writer = new PrintWriter(System.out);
+		Types.PrintTypeVisitor ptv = new Types.PrintTypeVisitor(writer);   // match its real constructor
+		for (ClassDecl tempClass : program.classes) {
+			CLASS c = (CLASS) symClassTable.get(Symbol.symbol(tempClass.name));
+			c.accept(ptv);
+		}
+		writer.flush();
 	}
 	
     public static void main(String [] args) 
@@ -59,9 +87,9 @@ public class Main {
 
 	try
 	{
-	Absyn.Program parse = new MiniJavaParser(reader).Goal();
+	Program parse = new MiniJavaParser(reader).Goal();
 	// PrintWriter writer = new PrintWriter(System.out);
-	// Absyn.PrintVisitor pv =	new Absyn.PrintVisitor(writer);
+	// Program PrintVisitor pv =	new Program PrintVisitor(writer);
 	// pv.visit(parse);
 	// writer.flush();
 	checkerPhaseOne(parse);
