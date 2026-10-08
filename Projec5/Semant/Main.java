@@ -118,6 +118,18 @@ public class Main {
 
 		if(errorCount > 0) return;
 	
+		for (ClassDecl tempClass : program.classes){
+			Symbol key1 = Symbol.symbol(tempClass.name);
+			CLASS c1 = (CLASS)symClassTable.get(key1);
+			
+			for (MethodDecl method : tempClass.methods) {
+				TypesPrint checker = new TypesPrint(symClassTable);
+
+				for (Stmt s : method.stmts) {   // use your real field name for the statement list
+					s.accept(checker);
+				}
+    		}
+		}
 
 		PrintWriter writer = new PrintWriter(System.out);
 		Types.PrintTypeVisitor ptv = new Types.PrintTypeVisitor(writer);   // match its real constructor
@@ -147,6 +159,14 @@ public class Main {
 			Fsource.put(f.type, f.name);             
 		}
 		for (FIELD f : cl.methods) {
+			FIELD parentMethod = Msource.get(f.name);
+
+			if (parentMethod != null) {
+				if (!parentMethod.type.equals(f.type)) {
+					System.out.println("ERROR incompatible method override: " + cl.parent.name + " in class " + cl.name +": line not available");
+					errorCount++;
+				}
+			}
 			Msource.override(f.type, f.name);
 		}
 	}

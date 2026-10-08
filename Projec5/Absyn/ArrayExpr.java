@@ -9,6 +9,8 @@ public class ArrayExpr extends AssignableExpr
 {
     public Expr target;
     public Expr index;
+    public Types.Type type;
+
     public ArrayExpr(Expr target, Expr index)
     {
         this.target = target;
@@ -16,5 +18,7 @@ public class ArrayExpr extends AssignableExpr
     }
     /** Visitor pattern dispatch. */
     public void accept(Visitor v) {v.visit(this); }
+
+    public Types.Type accept(Types.TypesTypeVisitor v) { return v.visit(this); }
     
 }

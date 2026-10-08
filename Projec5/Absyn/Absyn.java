@@ -9,4 +9,6 @@ public abstract class Absyn implements Visitable
 {
     /** Visitor pattern dispatch. */
     public abstract void accept(Visitor v);
+
+    public abstract Types.Type accept(Types.TypesTypeVisitor v);
 }

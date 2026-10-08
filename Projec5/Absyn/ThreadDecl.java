@@ -24,4 +24,6 @@ public class ThreadDecl extends ClassDecl
 
     /** Visitor pattern dispatch. */
     public void accept(Visitor v) {v.visit(this); }
+
+    public Types.Type accept(Types.TypesTypeVisitor v) { return v.visit(this); }
 }

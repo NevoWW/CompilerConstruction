@@ -19,4 +19,6 @@ public interface TypeVisitor
     public void visit(RECORD r);
     public void visit(STRING s);
     public void visit(VOID v);
+
+    
 }

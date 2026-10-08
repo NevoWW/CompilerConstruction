@@ -8,6 +8,7 @@ public class LesserExpr extends BinOpExpr
 {
     public Expr Expr1; 
     public Expr Expr2; 
+    public Types.Type type;
 
     public LesserExpr(Expr e1, Expr e2)
     {
@@ -15,4 +16,6 @@ public class LesserExpr extends BinOpExpr
         this.Expr2 = e2;
     }
     public void accept(Visitor v) {v.visit(this); }
+
+    public Types.Type accept(Types.TypesTypeVisitor v) { return v.visit(this); }
 }

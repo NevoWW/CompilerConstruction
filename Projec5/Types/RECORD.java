@@ -30,16 +30,16 @@ public class RECORD extends Type implements Iterable<FIELD>
 {
     FIELD old = map.get(name);
     if (old == null) return put(type, name);        
-    if(old.type != type){
-      System.out.println("ERROR incompatible types: " + old.type +"required, but "+ type +" found");
-      Semant.Main.errorCount++;
-      System.exit(-1);
-    }
-    if(old.index != fields.size()){
-        System.out.println("ERROR mismatch in number of arguments");
-        Semant.Main.errorCount++;
-        System.exit(-1);
-    }
+    // if(old.type != type){
+    //   System.out.println("ERROR incompatible method override: " +  +"required, but "+ type +" found");
+    //   Semant.Main.errorCount++;
+    //   System.exit(-1);
+    // }
+    // if(old.index != fields.size()){
+    //     System.out.println("ERROR mismatch in number of arguments");
+    //     Semant.Main.errorCount++;
+    //     System.exit(-1);
+    // }
     FIELD f = new FIELD(type, name, old.index);     
     fields.set(fields.indexOf(old), f);             
     map.put(name, f);

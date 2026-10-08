@@ -9,4 +9,6 @@ public abstract class Expr extends Absyn
 {
     /** Visitor pattern dispatch. */
     public abstract void accept(Visitor v);
+
+    public abstract Types.Type accept(Types.TypesTypeVisitor v);
 }

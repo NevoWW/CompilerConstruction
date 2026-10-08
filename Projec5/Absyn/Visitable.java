@@ -10,4 +10,6 @@ public interface Visitable
     /** Visitor pattern dispatch. */
     public void accept(Visitor v);
 
+    public Types.Type accept(Types.TypesTypeVisitor v);
+
 }

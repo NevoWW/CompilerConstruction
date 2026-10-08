@@ -10,6 +10,8 @@ public class NewArrayExpr extends Expr
 {
     public Type type;
     public LinkedList<Expr> dim;
+    public Types.Type type2;
+
     public NewArrayExpr(Type type, LinkedList<Expr> dim)
     {
         this.type = type;
@@ -17,4 +19,5 @@ public class NewArrayExpr extends Expr
     }
     /** Visitor pattern dispatch. */
     public void accept(Visitor v) {v.visit(this); }
+    public Types.Type accept(Types.TypesTypeVisitor v) { return v.visit(this); }
 }

@@ -10,6 +10,8 @@ public class VarDecl extends Absyn
     public Type type;
     public String name;
     public Expr init;
+    public Types.Type typeInfo;
+    
     public VarDecl(Type type, String name, Expr init)
     {
 		this.type = type;
@@ -19,4 +21,6 @@ public class VarDecl extends Absyn
 
     /** Visitor pattern dispatch. */
     public void accept(Visitor v) {v.visit(this); }
+
+    public Types.Type accept(Types.TypesTypeVisitor v) { return v.visit(this); }
 }

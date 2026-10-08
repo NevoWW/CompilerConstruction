@@ -9,6 +9,8 @@ public class FieldExpr extends AssignableExpr
 {
     public Expr target;
     public String field;
+    public Types.Type type;
+
     public FieldExpr(Expr target, String field)
     {
         this.target = target;
@@ -16,4 +18,6 @@ public class FieldExpr extends AssignableExpr
     }
     /** Visitor pattern dispatch. */
     public void accept(Visitor v) {v.visit(this); }
+
+    public Types.Type accept(Types.TypesTypeVisitor v) { return v.visit(this); }
 }

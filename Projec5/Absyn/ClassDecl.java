@@ -23,5 +23,9 @@ public class ClassDecl extends Absyn
 
     /** Visitor pattern dispatch. */
     public void accept(Visitor v) {v.visit(this); }
+
+    public Types.Type accept(Types.TypesTypeVisitor v) {
+    return v.visit(this);
+    }
     
 }
