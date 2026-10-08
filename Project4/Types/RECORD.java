@@ -26,6 +26,16 @@ public class RECORD extends Type implements Iterable<FIELD>
 		fields.add(f);
 		return map.put(name, f);
     }
+    public FIELD override(Type type, String name)
+{
+    FIELD old = map.get(name);
+    if (old == null) return put(type, name);        
+
+    FIELD f = new FIELD(type, name, old.index);     
+    fields.set(fields.indexOf(old), f);             
+    map.put(name, f);
+    return old;
+}
 
     public FIELD get(String name)
     {

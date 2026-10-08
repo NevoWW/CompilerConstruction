@@ -1,10 +1,10 @@
 package Semant;
 
-import Parse.*;
 import Absyn.*;
-import Types.*;
+import Parse.*;
 import Symbol.Symbol;
 import Symbol.Table;
+import Types.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -51,7 +51,7 @@ public class Main {
 
 			 
 				if (parent == null) {
-					System.out.println("class " + tempClass.name + " extends undefined class " + tempClass.parent);
+					System.out.println("ERROR cannot resolve parent class: " + tempClass.parent + ": line not available");
 					errorCount++;
 					continue;
 				}
@@ -93,7 +93,7 @@ public class Main {
 			CLASS c1 = (CLASS)symClassTable.get(key1);
 			RECORD Fsource = new RECORD();
 			RECORD Msource = new RECORD();
-			copy(Fsource,Msource,c1);
+			copy(Fsource,Msource,c1,symClassTable);
 			c1.instance.fields = Fsource;
 			c1.instance.methods = Msource;
 
@@ -110,19 +110,26 @@ public class Main {
 	}
 
 
-	static void copy(RECORD Fsource, RECORD Msource, CLASS cl){
-			if(cl.parent == null){
-				for(FIELD f : cl.fields){
-					if(Fsource.get(f.name) == null) Fsource.put(f.type,f.name);
-				}
-				for(FIELD f : cl.methods){
-					if(Msource.get(f.name) == null) Msource.put(f.type,f.name);
-				}
+	static void copy(RECORD Fsource, RECORD Msource, CLASS cl, Table table) {
+		if (cl == null) return;
+		if(cl.parent != null){
+			Symbol parent = Symbol.symbol(cl.parent.name);  
+			if(table.get(parent) == null){
+				System.out.print("ERROR cannot resolve parent class: " + parent + ": line not available");
+				errorCount++;
 				return;
-			}else{
-				copy(Fsource, Msource, cl.parent);
-			}
-				
+			} 
+		}
+		
+		copy(Fsource, Msource, cl.parent,table);               
+
+		
+		for (FIELD f : cl.fields) {
+			Fsource.put(f.type, f.name);             
+		}
+		for (FIELD f : cl.methods) {
+			Msource.override(f.type, f.name);
+		}
 	}
 
 	static void duplicateClassCheck(CLASS cl, Table symClassTable){
