@@ -45,7 +45,24 @@ public class Main {
 		for(ClassDecl tempClass : program.classes){
 			Symbol key1 = Symbol.symbol(tempClass.name);
 			CLASS c1 = (CLASS)symClassTable.get(key1);
+
+			if (tempClass.parent != null){
+				CLASS parent = (CLASS) symClassTable.get(Symbol.symbol(tempClass.parent));
+
+			 
+				if (parent == null) {
+					System.out.println("class " + tempClass.name + " extends undefined class " + tempClass.parent);
+					errorCount++;
+					continue;
+				}
+				c1.parent = parent;
+			}
 			for(MethodDecl method : tempClass.methods){
+				if (c1.methods.get(method.name) != null) {
+					System.out.println("ERROR " + method.name + " is already defined in " + tempClass.name);
+					errorCount++;
+					continue;
+				}
 				Types.Type ret;
 				if(method.returnType == null){
 					ret = new Types.VOID();
@@ -53,7 +70,6 @@ public class Main {
 				else{
 					ret = method.returnType.accept(new TypesPrint(symClassTable));
 				}
-				// c1.methods.put(ret,method.name);
 
 				RECORD formals = new RECORD();
 				for(Formal params : method.params){
@@ -69,6 +85,8 @@ public class Main {
 				c1.fields.put(fType,field.name);
 			}
 		}
+
+		if(errorCount > 0) return;
 
 		for (ClassDecl tempClass : program.classes){
 			Symbol key1 = Symbol.symbol(tempClass.name);
