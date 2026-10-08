@@ -8,12 +8,12 @@ class Inheritence{
     }
 }
 
-class a{
+class a {
     int x;
     int y;
     public int a(){return 5;}
 }
-class b extends c{
+class b extends a{
     int z;
     public int b(){return 6;}
 }

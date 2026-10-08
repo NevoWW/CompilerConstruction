@@ -89,6 +89,23 @@ public class Main {
 		if(errorCount > 0) return;
 
 		for (ClassDecl tempClass : program.classes){
+			CLASS c1 = (CLASS)symClassTable.get(Symbol.symbol(tempClass.name));
+			CLASS parent = c1.parent;
+			int steps = 0;
+			while (parent != null && steps <= program.classes.size()) {
+				if (parent == c1) {
+					System.out.println("ERROR cyclic inheritance involving " + c1.name + ": line not available");
+					errorCount++;
+					break;
+				}
+				parent = parent.parent;
+				steps++;
+			}
+		}
+
+		if(errorCount > 0) return;
+
+		for (ClassDecl tempClass : program.classes){
 			Symbol key1 = Symbol.symbol(tempClass.name);
 			CLASS c1 = (CLASS)symClassTable.get(key1);
 			RECORD Fsource = new RECORD();
@@ -98,6 +115,8 @@ public class Main {
 			c1.instance.methods = Msource;
 
 		}
+
+		if(errorCount > 0) return;
 	
 
 		PrintWriter writer = new PrintWriter(System.out);

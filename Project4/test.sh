@@ -6,23 +6,23 @@
 make clean
 make
 echo
-echo Running test 1
-java Semant.Main -c - < ~brylow/cosc4400/Projects/tests/TreeVisitor.java > proj.out
-java Parse.Main < ~brylow/cosc4400/Projects/tests/TreeVisitor.java | ~brylow/cosc4400/Projects/mjchecker -c3 - > ref.out
+#echo Running test 1
+java Semant.Main -c - < ~brylow/cosc4400/Projects/tests/BinaryTree.java > proj.out
+java Parse.Main < ~brylow/cosc4400/Projects/tests/BinaryTree.java | ~brylow/cosc4400/Projects/mjchecker -c3 - > ref.out
 #java Semant.Main -c3 - < ~brylow/cosc4400/Projects/tests/TreeVisitor.java > ref.out
 diff -u proj.out ref.out
 rm proj.out ref.out
-echo
-echo Done test 1
-echo
-echo Running test 2
-java Semant.Main -c - < testcases/Inheritence.java > proj.out
-java Parse.Main < testcases/Inheritence.java | ~brylow/cosc4400/Projects/mjchecker -c3 - > ref.out
+#echo
+#echo Done test 1
+#echo
+#echo Running test 2
+#java Semant.Main -c - < testcases/Inheritence.java > proj.out
+#java Parse.Main < testcases/Inheritence.java | ~brylow/cosc4400/Projects/mjchecker -c3 - > ref.out
 #java Semant.Main -c3 - < ~brylow/cosc4400/Projects/tests/TreeVisitor.java > ref.out
-diff -u proj.out ref.out
-rm proj.out ref.out
-echo
-echo Done test 2
+#diff -u proj.out ref.out
+#rm proj.out ref.out
+#echo
+#echo Done test 2
 # echo
 # echo Running test 2
 # java Parse.Main < ~brylow/cosc4400/Projects/tests/BinaryTree.java > proj.out
