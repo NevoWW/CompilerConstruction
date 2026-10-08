@@ -13,7 +13,7 @@ class a {
     int y;
     public int a(){return 5;}
 }
-class b extends a{
+class b extends a {
     int z;
-    public int b(){return 6;}
+    public int a(){return 6;}
 }
