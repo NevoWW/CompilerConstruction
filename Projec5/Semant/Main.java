@@ -159,15 +159,20 @@ public class Main {
 			Fsource.put(f.type, f.name);             
 		}
 		for (FIELD f : cl.methods) {
-			FIELD parentMethod = Msource.get(f.name);
+			// FIELD parentMethod = Msource.get(f.name);
 
-			if (parentMethod != null) {
-				if (!parentMethod.type.equals(f.type)) {
-					System.out.println("ERROR incompatible method override: " + cl.parent.name + " in class " + cl.name +": line not available");
-					errorCount++;
-				}
+			// if (parentMethod != null) {
+			// 	if (!parentMethod.type.coerceTo(f.type) || !f.type.coerceTo(parentMethod.type)) {
+			// 		System.out.println("ERROR incompatible method override: " + cl.parent.name + " in class " + cl.name +": line not available");
+			// 		errorCount++;
+			// 	}
+			// }
+			if(cl.parent != null){
+				Msource.override(f.type, f.name, cl.parent.name, cl.name);
+			}else{
+				Msource.override(f.type, f.name, cl.name, cl.name);
 			}
-			Msource.override(f.type, f.name);
+			
 		}
 	}
 

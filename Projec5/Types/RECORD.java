@@ -26,24 +26,65 @@ public class RECORD extends Type implements Iterable<FIELD>
 		fields.add(f);
 		return map.put(name, f);
     }
-    public FIELD override(Type type, String name)
-{
-    FIELD old = map.get(name);
-    if (old == null) return put(type, name);        
-    // if(old.type != type){
-    //   System.out.println("ERROR incompatible method override: " +  +"required, but "+ type +" found");
-    //   Semant.Main.errorCount++;
-    //   System.exit(-1);
-    // }
-    // if(old.index != fields.size()){
-    //     System.out.println("ERROR mismatch in number of arguments");
-    //     Semant.Main.errorCount++;
-    //     System.exit(-1);
-    // }
-    FIELD f = new FIELD(type, name, old.index);     
-    fields.set(fields.indexOf(old), f);             
-    map.put(name, f);
-    return old;
+
+    public FIELD override(Type type, String name, String parentCl, String curCl)
+  {
+      FIELD old = map.get(name);
+      if (old == null) return put(type, name);  
+      if (!sameMethod(old.type, type)) {
+					System.out.println("ERROR incompatible method override: " + parentCl + " in class " + curCl +": line not available");
+					Semant.Main.errorCount++;
+				}      
+      // if(old.type != type){
+      //   System.out.println("ERROR incompatible method override: " +  +"required, but "+ type +" found");
+      //   Semant.Main.errorCount++;
+      //   System.exit(-1);
+      // }
+      // if(old.index != fields.size()){
+      //     System.out.println("ERROR mismatch in number of arguments");
+      //     Semant.Main.errorCount++;
+      //     System.exit(-1);
+      // }
+      FIELD f = new FIELD(type, name, old.index);     
+      fields.set(fields.indexOf(old), f);             
+      map.put(name, f);
+      return old;
+  }
+
+  private boolean sameMethod(Type oldType, Type newType) {
+    if (!(oldType instanceof FUNCTION)
+            || !(newType instanceof FUNCTION)) {
+        return false;
+    }
+
+    FUNCTION oldFn = (FUNCTION) oldType;
+    FUNCTION newFn = (FUNCTION) newType;
+
+    // Compare return types.
+    if (!oldFn.result.toString().equals(newFn.result.toString())) {
+        return false;
+    }
+
+    // Compare parameter counts.
+    if (oldFn.formals.size() != newFn.formals.size()) {
+        return false;
+    }
+
+    // Compare parameter types in order.
+    Iterator<FIELD> oldIter = oldFn.formals.iterator();
+    Iterator<FIELD> newIter = newFn.formals.iterator();
+
+    while (oldIter.hasNext() && newIter.hasNext()) {
+        FIELD oldParam = oldIter.next();
+        FIELD newParam = newIter.next();
+
+        if (!oldParam.type.toString().equals(
+                newParam.type.toString())) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
     public FIELD get(String name)
