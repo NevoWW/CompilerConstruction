@@ -27,6 +27,7 @@ public class TypesPrint implements TypesTypeVisitor
         return new BOOLEAN();
     }
 
+
     public Types.Type visit(TrueExpr ast) {
         return new BOOLEAN();
     }
@@ -53,7 +54,15 @@ public class TypesPrint implements TypesTypeVisitor
         return new VOID();
     }
     public Types.Type visit(AssignStmt ast) {
-        return new VOID();
+        Type leftType = ast.lhs.accept(this);
+        Type rightType = ast.rhs.accept(this);
+        if (!rightType.coerceTo(leftType)){
+            System.out.println("Incompatible type");
+            Semant.Main.errorCount++;
+            return new VOID();
+        }else{
+            return new VOID();
+        }
     }
     public Types.Type visit(WhileStmt ast) {
         return new VOID();
