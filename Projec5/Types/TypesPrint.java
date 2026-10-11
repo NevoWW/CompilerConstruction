@@ -155,8 +155,7 @@ public class TypesPrint implements TypesTypeVisitor
         return new VOID();
     }
     public Types.Type visit(NewArrayExpr ast) {
-        Type expr = ast.type.accept(this);
-        
+        return new VOID();
     }
     public Types.Type visit(XinuCallExpr ast) {
         return new VOID();
