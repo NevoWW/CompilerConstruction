@@ -4,6 +4,7 @@ import Symbol.*;
 public class TypesPrint implements TypesTypeVisitor
 {
 	private final Table typeEnv;
+    private CLASS currentClass = null;
 
     public TypesPrint(Table typeEnv) {this.typeEnv = typeEnv; }
     public Types.Type visit(ArrayType ast) {
@@ -48,18 +49,43 @@ public class TypesPrint implements TypesTypeVisitor
         return new BOOLEAN();
     }
     
-    public Types.Type visit(ThisExpr ast) {
-        return new VOID();
-    }
     public Types.Type visit(ArrayExpr ast) {
-        return new VOID();
+        Type targetType = ast.target.accept(this);
+        Type indexType = ast.index.accept(this);
+        Type check = new INT();
+
+        if (!indexType.coerceTo(check)) {
+            System.out.println("Incompatible types: " + check + " required, but " + indexType + " found");
+            Semant.Main.errorCount++;
+        }
+
+        if (!(targetType instanceof ARRAY)) {
+            System.out.println("ERROR array required, but " + targetType + " found");
+            Semant.Main.errorCount++;
+            ast.type = new VOID();
+            return ast.type;
+        }
+
+        return ((ARRAY) targetType).element;
     }
+
+    public Types.Type visit(ThisExpr ast){
+        if (currentClass == null) {
+            System.out.println("ERROR this used outside a class");
+            Semant.Main.errorCount++;
+            return new VOID();
+        }
+        return currentClass.instance;
+    }
+
     public Types.Type visit(FieldExpr ast) {
         return new VOID();
     }
+
     public Types.Type visit(CallExpr ast) {
         return new VOID();
     }
+
     public Types.Type visit(AssignStmt ast) {
         Type leftType = ast.lhs.accept(this);
         Type rightType = ast.rhs.accept(this);
@@ -152,10 +178,14 @@ public class TypesPrint implements TypesTypeVisitor
         return new VOID();
     }
     public Types.Type visit(NewObjectExpr ast) {
-        return new VOID();
+        Type t = ast.type.accept(this);
+        ast.type2 = t;
+        return t;
     }
     public Types.Type visit(NewArrayExpr ast) {
-        return new VOID();
+        Type t = ast.type.accept(this);
+        ast.type2 = t;
+        return t;
     }
     public Types.Type visit(XinuCallExpr ast) {
         return new VOID();
@@ -287,6 +317,13 @@ public class TypesPrint implements TypesTypeVisitor
     }
 
     public Types.Type visit(ClassDecl ast) {
+        CLASS saved = currentClass;
+        currentClass = (CLASS) typeEnv.get(Symbol.symbol(ast.name));   // check field name
+        typeEnv.beginScope();
+        for (VarDecl field : ast.fields) field.accept(this);
+        for (MethodDecl method : ast.methods) method.accept(this);
+        typeEnv.endScope();
+        currentClass = saved;
         return new VOID();
     }
     public Types.Type visit(java.util.AbstractList<Visitable> list) {
