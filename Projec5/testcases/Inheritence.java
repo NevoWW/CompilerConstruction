@@ -2,8 +2,8 @@
 class Inheritence{
     
     public static void main(String[] a){
-	Xinu.print(new a());
-    Xinu.print(new b());
+	Xinu.printint(new a().a());
+    Xinu.printint(new b().a());
 
     }
 }
@@ -15,5 +15,5 @@ class a {
 }
 class b extends a{
     int z;
-    public boolean a(){return 6;}
+    public int a(){return 6;}
 }

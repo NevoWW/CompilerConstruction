@@ -25,13 +25,13 @@ public class TypesPrint implements TypesTypeVisitor
     public Types.Type visit(FalseExpr ast) {return new BOOLEAN();}
     public Types.Type visit(IntegerLiteral ast) {return new INT();}
     public Types.Type visit(StringLiteral ast) {return new STRING();}
-    public Types.Type visit(IdentifierExpr ast) {return new STRING();}
     public Types.Type visit(NullExpr ast) {return new NIL();}
 
     public Types.Type visit(AndExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
         Type rightExpr = ast.Expr2.accept(this);
-        if(!leftExpr.coerceTo(rightExpr) || !rightExpr.coerceTo(leftExpr)){
+        Type check = new BOOLEAN();
+        if(!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)){
             System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
             Semant.Main.errorCount++;
         }
@@ -40,7 +40,8 @@ public class TypesPrint implements TypesTypeVisitor
     public Types.Type visit(OrExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
         Type rightExpr = ast.Expr2.accept(this);
-        if(!leftExpr.coerceTo(rightExpr) || !rightExpr.coerceTo(leftExpr)){
+        Type check = new BOOLEAN();
+        if(!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)){
             System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
             Semant.Main.errorCount++;
         }
@@ -140,7 +141,7 @@ public class TypesPrint implements TypesTypeVisitor
         
         if(ast.init != null){
             Type varExpr = ast.init.accept(this);
-            if(!typeVar.coerceTo(varExpr) || !varExpr.coerceTo(typeVar)){
+            if(!varExpr.coerceTo(typeVar)){
                 System.out.println("Incompatible types: " + typeVar +" required, but "+ varExpr + " found");
                 Semant.Main.errorCount++;
             
@@ -154,7 +155,8 @@ public class TypesPrint implements TypesTypeVisitor
         return new VOID();
     }
     public Types.Type visit(NewArrayExpr ast) {
-        return new VOID();
+        Type expr = ast.type.accept(this);
+        
     }
     public Types.Type visit(XinuCallExpr ast) {
         return new VOID();
@@ -179,17 +181,28 @@ public class TypesPrint implements TypesTypeVisitor
     }
     public Types.Type visit(NotExpr ast) {
         Type expr = ast.Expr1.accept(this);
+        Type check = new BOOLEAN();
+        if (!expr.coerceTo(check)) {
+            System.out.println("ERROR operator ! cannot be applied to " + expr);
+            Semant.Main.errorCount++;
+        }
         return new BOOLEAN();
     }
     public Types.Type visit(NegExpr ast) {
         Type expr = ast.Expr1.accept(this);
+        Type check = new INT();
+        if (!expr.coerceTo(check)) {
+            System.out.println("ERROR operator - cannot be applied to " + expr);
+            Semant.Main.errorCount++;
+        }
         return new INT();
     }
     public Types.Type visit(AddExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
         Type rightExpr = ast.Expr2.accept(this);
-        if(!leftExpr.coerceTo(rightExpr) || !rightExpr.coerceTo(leftExpr)){
-            System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+        Type check = new INT();
+        if (!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)) {
+            System.out.println("ERROR operator + cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
         return new INT();
@@ -197,8 +210,9 @@ public class TypesPrint implements TypesTypeVisitor
     public Types.Type visit(SubExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
         Type rightExpr = ast.Expr2.accept(this);
-        if(!leftExpr.coerceTo(rightExpr) || !rightExpr.coerceTo(leftExpr)){
-            System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+        Type check = new INT();
+        if(!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)){
+            System.out.println("ERROR operator - cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
         return new INT();
@@ -206,8 +220,9 @@ public class TypesPrint implements TypesTypeVisitor
     public Types.Type visit(MulExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
         Type rightExpr = ast.Expr2.accept(this);
-        if(!leftExpr.coerceTo(rightExpr) || !rightExpr.coerceTo(leftExpr)){
-            System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+        Type check = new INT();
+        if(!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)){
+            System.out.println("ERROR operator * cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
         return new INT();
@@ -216,8 +231,9 @@ public class TypesPrint implements TypesTypeVisitor
     public Types.Type visit(DivExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
         Type rightExpr = ast.Expr2.accept(this);
-        if(!leftExpr.coerceTo(rightExpr) || !rightExpr.coerceTo(leftExpr)){
-            System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+        Type check = new INT();
+        if(!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)){
+            System.out.println("ERROR operator / cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
         return new INT();
@@ -227,7 +243,7 @@ public class TypesPrint implements TypesTypeVisitor
         Type leftExpr = ast.Expr1.accept(this);
         Type rightExpr = ast.Expr2.accept(this);
         if(!leftExpr.coerceTo(rightExpr) || !rightExpr.coerceTo(leftExpr)){
-            System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+            System.out.println("ERROR operator == cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
         return new BOOLEAN();
@@ -235,8 +251,9 @@ public class TypesPrint implements TypesTypeVisitor
     public Types.Type visit(GreaterExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
         Type rightExpr = ast.Expr2.accept(this);
-        if(!leftExpr.coerceTo(rightExpr) || !rightExpr.coerceTo(leftExpr)){
-            System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+        Type check = new INT();
+        if(!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)){
+            System.out.println("ERROR operator > cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
         return new BOOLEAN();
@@ -244,8 +261,9 @@ public class TypesPrint implements TypesTypeVisitor
     public Types.Type visit(LesserExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
         Type rightExpr = ast.Expr2.accept(this);
-        if(!leftExpr.coerceTo(rightExpr) || !rightExpr.coerceTo(leftExpr)){
-            System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+        Type check = new INT();
+        if(!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)){
+            System.out.println("ERROR operator < cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
         return new BOOLEAN();
@@ -254,8 +272,21 @@ public class TypesPrint implements TypesTypeVisitor
     
 
     public Types.Type visit(AssignableExpr ast) {
-        return new BOOLEAN();
+        return new VOID();
     }
+
+    public Types.Type visit(IdentifierExpr ast) {
+        Symbol key = Symbol.symbol(ast.id);
+        Types.Type type = (Types.Type) typeEnv.get(key);
+
+        if (type == null) {
+            Semant.Main.errorCount++;
+            return new VOID();
+        }
+
+        return type;
+    }
+
     public Types.Type visit(ClassDecl ast) {
         return new VOID();
     }

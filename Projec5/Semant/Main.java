@@ -118,19 +118,28 @@ public class Main {
 
 		if(errorCount > 0) return;
 	
-		for (ClassDecl tempClass : program.classes){
+		for (ClassDecl tempClass : program.classes) {
 			symClassTable.beginScope();
+
 			for (MethodDecl method : tempClass.methods) {
 				symClassTable.beginScope();
 				TypesPrint checker = new TypesPrint(symClassTable);
 
-				for (Stmt s : method.stmts) { 
+				for (Formal param : method.params) {
+					param.accept(checker);
+				}
+				for (VarDecl local : method.locals) {
+					local.accept(checker);
+				}
+				for (Stmt s : method.stmts) {
 					s.accept(checker);
 				}
 				symClassTable.endScope();
-    		}
+			}
 			symClassTable.endScope();
 		}
+
+		if(errorCount > 0) return;
 
 		PrintWriter writer = new PrintWriter(System.out);
 		Types.PrintTypeVisitor ptv = new Types.PrintTypeVisitor(writer);   // match its real constructor
