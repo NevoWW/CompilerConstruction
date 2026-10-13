@@ -12,6 +12,7 @@ public class ThreadDecl extends ClassDecl
     public String parent;
     public LinkedList<VarDecl> fields;
     public LinkedList<MethodDecl> methods;
+    public Types.Type type;
 
     public ThreadDecl(String name, String parent, LinkedList<VarDecl> fields, LinkedList<MethodDecl> methods)
     {

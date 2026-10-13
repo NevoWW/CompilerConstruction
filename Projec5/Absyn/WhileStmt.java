@@ -9,6 +9,7 @@ public class WhileStmt extends Stmt
 {
     public Expr test;
     public Stmt body;
+    public Types.Type type;
     public WhileStmt(Expr test, Stmt body)
     {
 		this.test = test;

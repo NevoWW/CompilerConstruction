@@ -10,6 +10,7 @@ public class IfStmt extends Stmt
     public Expr test;
     public Stmt thenStm;
     public Stmt elseStm;
+    public Types.Type type;
     public IfStmt(Expr test, Stmt thenStm, Stmt elseStm)
     {
 		this.test = test;

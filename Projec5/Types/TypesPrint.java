@@ -36,7 +36,9 @@ public class TypesPrint implements TypesTypeVisitor
             System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
             Semant.Main.errorCount++;
         }
-        return new BOOLEAN();
+
+        ast.type = new BOOLEAN();
+        return ast.type;
     }
     public Types.Type visit(OrExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
@@ -46,7 +48,8 @@ public class TypesPrint implements TypesTypeVisitor
             System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
             Semant.Main.errorCount++;
         }
-        return new BOOLEAN();
+        ast.type = new BOOLEAN();
+        return ast.type;
     }
     
     public Types.Type visit(ArrayExpr ast) {
@@ -66,17 +69,20 @@ public class TypesPrint implements TypesTypeVisitor
             return ast.type;
         }
 
-        return ((ARRAY) targetType).element;
+        ast.type = ((ARRAY) targetType).element;
+        return ast.type;
     }
 
     public Types.Type visit(ThisExpr ast){
         if (currentClass == null) {
             System.out.println("ERROR: this used outside a class");
             Semant.Main.errorCount++;
-            return new VOID();
+            ast.type = new VOID();
+            return ast.type;
         }
 
-        return currentClass.instance;
+        ast.type = currentClass.instance;
+        return ast.type;
     }
 
     public Types.Type visit(FieldExpr ast) {
@@ -124,7 +130,8 @@ public class TypesPrint implements TypesTypeVisitor
             Semant.Main.errorCount++;
         }
     }
-        return function.result;
+        ast.type = function.result;
+        return ast.type;
 
     }
 
@@ -136,8 +143,10 @@ public class TypesPrint implements TypesTypeVisitor
             Semant.Main.errorCount++;
             
         }
-        return new VOID();
+        ast.type = new VOID();
+        return ast.type;
     }
+
     public Types.Type visit(WhileStmt ast) {
         Type test = ast.test.accept(this);
         Type check = new BOOLEAN();
@@ -149,8 +158,11 @@ public class TypesPrint implements TypesTypeVisitor
         
         ast.body.accept(this);
         typeEnv.endScope();
-        return new VOID();
+
+        ast.type = new VOID();
+        return ast.type;
     }
+
     public Types.Type visit(IfStmt ast) {
         Type ifstmt = ast.test.accept(this);
         BOOLEAN check = new BOOLEAN();
@@ -166,16 +178,21 @@ public class TypesPrint implements TypesTypeVisitor
         Type elsestmt = ast.elseStm.accept(this);
         typeEnv.endScope();
 
-        return new VOID();
+        ast.type = new VOID();
+        return ast.type;
     }
+
     public Types.Type visit(BlockStmt ast) {
         for (Stmt s : ast.stmts) {
         s.accept(this);
         }
-        return new VOID();
+        ast.type = new VOID();
+        return ast.type;
     }
+
     public Types.Type visit(Program ast) {
-        return new VOID();
+        ast.type = new VOID();
+        return ast.type;
     }
     public Types.Type visit(MethodDecl ast) {
 //         System.out.println("Checking method: " + ast.name);
@@ -210,14 +227,18 @@ public class TypesPrint implements TypesTypeVisitor
             }
         }
         typeEnv.endScope();
-        return returnType;
+        ast.type = returnType;
+        return ast.type;
     }
+
     public Types.Type visit(Formal ast) {
         Type type = ast.type.accept(this);
         
         typeEnv.put(Symbol.symbol(ast.name), type);
-        return new VOID();
+        ast.typeOfFormal = new VOID();
+        return ast.typeOfFormal;
     }
+
     public Types.Type visit(VarDecl ast) {
         Type typeVar = ast.type.accept(this);
         
@@ -231,17 +252,20 @@ public class TypesPrint implements TypesTypeVisitor
         }
         
         typeEnv.put(Symbol.symbol(ast.name), typeVar);
-        return new VOID();
+        ast.typeInfo = typeVar;
+        return ast.typeInfo;
     }
+
     public Types.Type visit(NewObjectExpr ast) {
         Type t = ast.type.accept(this);
         ast.type2 = t;
-        return t;
+        return ast.type2;
     }
+
     public Types.Type visit(NewArrayExpr ast) {
         Type t = ast.type.accept(this);
         ast.type2 = t;
-        return t;
+        return ast.type2;
     }
     public Types.Type visit(XinuCallExpr ast) {
         return new VOID();
@@ -256,13 +280,16 @@ public class TypesPrint implements TypesTypeVisitor
             System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
             Semant.Main.errorCount++;
         }
-        return new BOOLEAN();
+        ast.type = new BOOLEAN();
+        return ast.type;
     }
     public Types.Type visit(VoidDecl ast) {
-        return new VOID();
+        ast.type = new VOID();
+        return ast.type;
     }
     public Types.Type visit(ThreadDecl ast) {
-        return new VOID();
+        ast.type = new VOID();
+        return ast.type;
     }
     public Types.Type visit(NotExpr ast) {
         Type expr = ast.Expr1.accept(this);
@@ -271,7 +298,8 @@ public class TypesPrint implements TypesTypeVisitor
             System.out.println("ERROR operator ! cannot be applied to " + expr);
             Semant.Main.errorCount++;
         }
-        return new BOOLEAN();
+        ast.type = new BOOLEAN();
+        return ast.type;
     }
     public Types.Type visit(NegExpr ast) {
         Type expr = ast.Expr1.accept(this);
@@ -280,7 +308,8 @@ public class TypesPrint implements TypesTypeVisitor
             System.out.println("ERROR operator - cannot be applied to " + expr);
             Semant.Main.errorCount++;
         }
-        return new INT();
+        ast.type = new INT();
+        return ast.type;
     }
     public Types.Type visit(AddExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
@@ -290,7 +319,8 @@ public class TypesPrint implements TypesTypeVisitor
             System.out.println("ERROR operator + cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
-        return new INT();
+        ast.type = new INT();
+        return ast.type;
     }
     public Types.Type visit(SubExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
@@ -300,7 +330,8 @@ public class TypesPrint implements TypesTypeVisitor
             System.out.println("ERROR operator - cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
-        return new INT();
+        ast.type = new INT();
+        return ast.type;
     }
     public Types.Type visit(MulExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
@@ -310,7 +341,8 @@ public class TypesPrint implements TypesTypeVisitor
             System.out.println("ERROR operator * cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
-        return new INT();
+        ast.type = new INT();
+        return ast.type;
         
     }
     public Types.Type visit(DivExpr ast) {
@@ -321,7 +353,8 @@ public class TypesPrint implements TypesTypeVisitor
             System.out.println("ERROR operator / cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
-        return new INT();
+        ast.type = new INT();
+        return ast.type;
         
     }
     public Types.Type visit(EqualExpr ast) {
@@ -331,7 +364,8 @@ public class TypesPrint implements TypesTypeVisitor
             System.out.println("ERROR operator == cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
-        return new BOOLEAN();
+        ast.type = new BOOLEAN();
+        return ast.type;
     }
     public Types.Type visit(GreaterExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
@@ -341,7 +375,8 @@ public class TypesPrint implements TypesTypeVisitor
             System.out.println("ERROR operator > cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
-        return new BOOLEAN();
+        ast.type = new BOOLEAN();
+        return ast.type;
     }
     public Types.Type visit(LesserExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
@@ -351,7 +386,8 @@ public class TypesPrint implements TypesTypeVisitor
             System.out.println("ERROR operator < cannot be applied to " + leftExpr + ", " + rightExpr);
             Semant.Main.errorCount++;
         }
-        return new BOOLEAN();
+        ast.type = new BOOLEAN();
+        return ast.type;
     }
     
     

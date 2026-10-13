@@ -7,6 +7,7 @@ package Absyn;
 
 public class ThisExpr extends Expr
 {
+    public Types.Type type;
     /** Visitor pattern dispatch. */
     public void accept(Visitor v) {v.visit(this); }
 

@@ -11,6 +11,7 @@ public class VoidDecl extends MethodDecl
     public String name;
     public LinkedList<VarDecl> locals;
     public LinkedList<Stmt> stmts;
+	public Types.Type type;
  
     public VoidDecl(Type returnType,
 		      boolean synced,

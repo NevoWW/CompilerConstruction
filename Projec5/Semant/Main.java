@@ -33,6 +33,7 @@ public class Main {
 
 			CLASS cl = new CLASS(tempClass.name);
 			duplicateClassCheck(cl, symClassTable);
+			tempClass.checkType = cl;
 			OBJECT ob;
 			Symbol key1 = Symbol.symbol(tempClass.name);
 			symClassTable.put(key1,cl);
@@ -80,6 +81,7 @@ public class Main {
 				}
 
 				FUNCTION fn = new FUNCTION(method.name,c1.instance, formals, ret);
+				method.checkType = fn;
 				c1.methods.put(fn,method.name);
 			}
 			for(VarDecl field : tempClass.fields){
@@ -126,12 +128,19 @@ public class Main {
 
 		if(errorCount > 0) return;
 		
+		// PrintWriter writer = new PrintWriter(System.out);
+		// Types.PrintTypeVisitor ptv = new Types.PrintTypeVisitor(writer);
+		// for (ClassDecl tempClass : program.classes) {
+		// 	CLASS c = (CLASS) symClassTable.get(Symbol.symbol(tempClass.name));
+		// 	c.accept(ptv);
+		// }
+		// writer.flush();
+
 		PrintWriter writer = new PrintWriter(System.out);
-		Types.PrintTypeVisitor ptv = new Types.PrintTypeVisitor(writer);
-		for (ClassDecl tempClass : program.classes) {
-			CLASS c = (CLASS) symClassTable.get(Symbol.symbol(tempClass.name));
-			c.accept(ptv);
-		}
+		CombinedVisitor combined = new CombinedVisitor(writer, checker);
+
+		program.accept(combined);
+
 		writer.flush();
 	}
 
