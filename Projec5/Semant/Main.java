@@ -73,7 +73,6 @@ public class Main {
 				}
 
 				RECORD formals = new RECORD();
-				formals.put(c1.instance, "this");
 
 				for(Formal params : method.params){
 					Types.Type fType = params.type.accept(new TypesPrint(symClassTable));
@@ -123,11 +122,10 @@ public class Main {
 		TypesPrint checker = new TypesPrint(symClassTable);
 		for (ClassDecl tempClass : program.classes) {
 			tempClass.accept(checker);
-			
 		}
 
 		if(errorCount > 0) return;
-
+		
 		PrintWriter writer = new PrintWriter(System.out);
 		Types.PrintTypeVisitor ptv = new Types.PrintTypeVisitor(writer);
 		for (ClassDecl tempClass : program.classes) {

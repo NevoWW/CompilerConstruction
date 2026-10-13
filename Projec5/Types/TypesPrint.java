@@ -85,6 +85,7 @@ public class TypesPrint implements TypesTypeVisitor
     }
 
     public Types.Type visit(CallExpr ast) {
+
         Type targetType = ast.target.accept(this);
 
         if(!(targetType instanceof OBJECT)) return new VOID();
@@ -108,9 +109,9 @@ public class TypesPrint implements TypesTypeVisitor
     // Skip the first formal ("this"), then check actual arguments.
     java.util.Iterator<FIELD> formals = function.formals.iterator();
 
-    if (formals.hasNext()) {
-        formals.next();
-    }
+    // if (formals.hasNext()) {
+    //     formals.next();
+    // }
 
     java.util.Iterator<Expr> args = ast.args.iterator();
 
@@ -178,8 +179,8 @@ public class TypesPrint implements TypesTypeVisitor
     }
     public Types.Type visit(MethodDecl ast) {
 //         System.out.println("Checking method: " + ast.name);
-// System.out.println("AST return type: " + ast.returnType);
-// System.out.println("AST return expression: " + ast.returnVal);
+//         System.out.println("AST return type: " + ast.returnType);
+//         System.out.println("AST return expression: " + ast.returnVal);
         typeEnv.beginScope();
 
         for (Formal f : ast.params) {
@@ -375,6 +376,7 @@ public class TypesPrint implements TypesTypeVisitor
         CLASS saved = currentClass;
         currentClass = (CLASS) typeEnv.get(Symbol.symbol(ast.name));   // check field name
         typeEnv.beginScope();
+        typeEnv.put(Symbol.symbol("this"), currentClass.instance);
         for (VarDecl field : ast.fields) field.accept(this);
         for (MethodDecl method : ast.methods) method.accept(this);
         typeEnv.endScope();
