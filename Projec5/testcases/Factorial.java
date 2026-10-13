@@ -1,7 +1,11 @@
 class Factorial{
     public static void main(String[] a){
 	Xinu.printint(new Fac().ComputeFac(10));
+	
     }
+	
+
+	
 }
 
 class Fac {

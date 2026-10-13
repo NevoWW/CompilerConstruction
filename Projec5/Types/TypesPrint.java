@@ -80,6 +80,7 @@ public class TypesPrint implements TypesTypeVisitor
     }
 
     public Types.Type visit(FieldExpr ast) {
+
         return new VOID();
     }
 
@@ -122,10 +123,6 @@ public class TypesPrint implements TypesTypeVisitor
             Semant.Main.errorCount++;
         }
     }
-        System.out.println("Calling method: " + ast.method);
-System.out.println("Method function type: " + function);
-System.out.println("Method result type: " + function.result);
-
         return function.result;
 
     }
@@ -180,9 +177,9 @@ System.out.println("Method result type: " + function.result);
         return new VOID();
     }
     public Types.Type visit(MethodDecl ast) {
-        System.out.println("Checking method: " + ast.name);
-System.out.println("AST return type: " + ast.returnType);
-System.out.println("AST return expression: " + ast.returnVal);
+//         System.out.println("Checking method: " + ast.name);
+// System.out.println("AST return type: " + ast.returnType);
+// System.out.println("AST return expression: " + ast.returnVal);
         typeEnv.beginScope();
 
         for (Formal f : ast.params) {
@@ -196,7 +193,10 @@ System.out.println("AST return expression: " + ast.returnVal);
         }
         Type returnType;
         if (ast.returnType == null) {
-            returnType = new VOID();
+
+            // System.out.println("Return type is null");
+            Type returnValType = ast.returnVal.accept(this);
+            returnType = returnValType;
         } else {
             returnType = ast.returnType.accept(this);
         }
