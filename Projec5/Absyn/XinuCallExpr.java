@@ -10,6 +10,8 @@ public class XinuCallExpr extends Expr
 {
     public String method;
     public LinkedList<Expr> args;
+    public int typeIndex;
+    
     public XinuCallExpr(String method, LinkedList<Expr> args)
     {
 		this.method = method;

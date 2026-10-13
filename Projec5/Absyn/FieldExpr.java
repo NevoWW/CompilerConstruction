@@ -10,6 +10,7 @@ public class FieldExpr extends AssignableExpr
     public Expr target;
     public String field;
     public Types.Type type;
+    public int typeIndex;
 
     public FieldExpr(Expr target, String field)
     {

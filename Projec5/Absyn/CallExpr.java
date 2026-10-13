@@ -12,6 +12,7 @@ public class CallExpr extends Expr
     public String method;
     public LinkedList<Expr> args;
     public Types.Type type;
+    public int typeIndex;
 
     public CallExpr(Expr target, String method, LinkedList<Expr> args)
     {

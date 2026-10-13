@@ -71,10 +71,11 @@ public class TypesPrint implements TypesTypeVisitor
 
     public Types.Type visit(ThisExpr ast){
         if (currentClass == null) {
-            System.out.println("ERROR this used outside a class");
+            System.out.println("ERROR: this used outside a class");
             Semant.Main.errorCount++;
             return new VOID();
         }
+
         return currentClass.instance;
     }
 
@@ -83,7 +84,50 @@ public class TypesPrint implements TypesTypeVisitor
     }
 
     public Types.Type visit(CallExpr ast) {
+        Type targetType = ast.target.accept(this);
+
+        if(!(targetType instanceof OBJECT)) return new VOID();
+        
+        FIELD methodField = ((OBJECT) targetType).methods.get(ast.method);
+
+        if (methodField == null || !(methodField.type instanceof FUNCTION)) {
+            System.out.println("ERROR: method not found: " + ast.method);
+            Semant.Main.errorCount++;
+            return new VOID();
+        }
+
+        FUNCTION function = (FUNCTION) methodField.type;
+
+        if (!targetType.coerceTo(function.self)) {
+        System.out.println("ERROR incompatible object type");
+        Semant.Main.errorCount++;
         return new VOID();
+    }
+
+    // Skip the first formal ("this"), then check actual arguments.
+    java.util.Iterator<FIELD> formals = function.formals.iterator();
+
+    if (formals.hasNext()) {
+        formals.next();
+    }
+
+    java.util.Iterator<Expr> args = ast.args.iterator();
+
+    while (formals.hasNext() && args.hasNext()) {
+        Type formalType = formals.next().type;
+        Type argType = args.next().accept(this);
+
+         if (!argType.coerceTo(formalType)) {
+            System.out.println("ERROR incompatible argument type");
+            Semant.Main.errorCount++;
+        }
+    }
+        System.out.println("Calling method: " + ast.method);
+System.out.println("Method function type: " + function);
+System.out.println("Method result type: " + function.result);
+
+        return function.result;
+
     }
 
     public Types.Type visit(AssignStmt ast) {
@@ -136,6 +180,9 @@ public class TypesPrint implements TypesTypeVisitor
         return new VOID();
     }
     public Types.Type visit(MethodDecl ast) {
+        System.out.println("Checking method: " + ast.name);
+System.out.println("AST return type: " + ast.returnType);
+System.out.println("AST return expression: " + ast.returnVal);
         typeEnv.beginScope();
 
         for (Formal f : ast.params) {
@@ -147,14 +194,22 @@ public class TypesPrint implements TypesTypeVisitor
         for (Stmt s : ast.stmts) {
             s.accept(this);
         }
-        Type returnType = ast.returnType.accept(this);
-        Type returnValue = ast.returnVal.accept(this);
-        if(!returnValue.coerceTo(returnType)){
-            System.out.println("Incompatible types: " + returnType +" required, but "+ returnValue + " found");
-            Semant.Main.errorCount++;
+        Type returnType;
+        if (ast.returnType == null) {
+            returnType = new VOID();
+        } else {
+            returnType = ast.returnType.accept(this);
+        }
+
+        if (ast.returnVal != null){
+            Type returnValue = ast.returnVal.accept(this);
+            if(!returnValue.coerceTo(returnType)){
+                System.out.println("Incompatible types: " + returnType +" required, but "+ returnValue + " found");
+                Semant.Main.errorCount++;
+            }
         }
         typeEnv.endScope();
-        return new VOID();
+        return returnType;
     }
     public Types.Type visit(Formal ast) {
         Type type = ast.type.accept(this);

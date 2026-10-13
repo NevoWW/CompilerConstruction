@@ -41,6 +41,7 @@ public class Main {
 
 		}
 		if(errorCount > 0) return;
+		makeXinuType(symClassTable);
 
 		for(ClassDecl tempClass : program.classes){
 			Symbol key1 = Symbol.symbol(tempClass.name);
@@ -72,6 +73,8 @@ public class Main {
 				}
 
 				RECORD formals = new RECORD();
+				formals.put(c1.instance, "this");
+
 				for(Formal params : method.params){
 					Types.Type fType = params.type.accept(new TypesPrint(symClassTable));
 					formals.put(fType,params.name);
@@ -117,32 +120,16 @@ public class Main {
 		}
 
 		if(errorCount > 0) return;
-	
+		TypesPrint checker = new TypesPrint(symClassTable);
 		for (ClassDecl tempClass : program.classes) {
-			symClassTable.beginScope();
-
-			for (MethodDecl method : tempClass.methods) {
-				symClassTable.beginScope();
-				TypesPrint checker = new TypesPrint(symClassTable);
-
-				for (Formal param : method.params) {
-					param.accept(checker);
-				}
-				for (VarDecl local : method.locals) {
-					local.accept(checker);
-				}
-				for (Stmt s : method.stmts) {
-					s.accept(checker);
-				}
-				symClassTable.endScope();
-			}
-			symClassTable.endScope();
+			tempClass.accept(checker);
+			
 		}
 
 		if(errorCount > 0) return;
 
 		PrintWriter writer = new PrintWriter(System.out);
-		Types.PrintTypeVisitor ptv = new Types.PrintTypeVisitor(writer);   // match its real constructor
+		Types.PrintTypeVisitor ptv = new Types.PrintTypeVisitor(writer);
 		for (ClassDecl tempClass : program.classes) {
 			CLASS c = (CLASS) symClassTable.get(Symbol.symbol(tempClass.name));
 			c.accept(ptv);
@@ -211,6 +198,59 @@ public class Main {
 	
 
 
+    }
+
+
+
+	private static void makeXinuType(Table symClassTable)
+    {
+        RECORD xinuFormals = new RECORD();
+        CLASS xinuClass = new CLASS("Xinu"); 
+        symClassTable.put(Symbol.symbol("Xinu"), xinuClass);
+    
+        java.util.LinkedList<MethodDecl> xinuMethods =
+            new java.util.LinkedList<MethodDecl>();
+    
+        java.util.LinkedList<Formal> params = new java.util.LinkedList<Formal>();
+        params.add(new Formal(new IdentifierType("TODO_ClassName"), "TODO_param"));
+        xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method1", params,
+                new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
+    
+        params = new java.util.LinkedList<Formal>();
+        params.add(new Formal(new IntegerType(), "x"));
+        xinuMethods.add(new MethodDecl(new IntegerType(), false, "printint", params,
+                new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
+        xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method3", params,
+                new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
+    
+        params = new java.util.LinkedList<Formal>();
+        xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method4", params,
+                new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
+        xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method5", params,
+                new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
+        xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method6", params,
+                new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
+    
+        params = new java.util.LinkedList<Formal>();
+        params.add(new Formal(new IdentifierType("TODO_ClassName"), "TODO_param"));
+        xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method7", params,
+                new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
+    
+        for (MethodDecl md : xinuMethods)
+        {
+			Types.Type ret = md.returnType.accept(new TypesPrint(symClassTable));
+
+			RECORD formals = new RECORD();
+			formals.put(xinuClass.instance, "this");
+			for (Formal p : md.params) {
+				formals.put(p.type.accept(new TypesPrint(symClassTable)), p.name);
+			}
+
+			FUNCTION fn = new FUNCTION(md.name, xinuClass.instance, formals, ret);
+			xinuClass.methods.put(fn, md.name);
+		}
+        for (FIELD m : xinuClass.methods)
+            { xinuClass.instance.methods.put(m.type, m.name); }
     }
 
 	
