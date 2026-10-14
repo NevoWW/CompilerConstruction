@@ -347,6 +347,11 @@ public class TypesPrint implements TypesTypeVisitor
                 Semant.Main.errorCount++;
             }
         }
+
+        if (formals.hasNext() || args.hasNext()) {
+            System.out.println("ERROR <exact text from the handout>");
+            Semant.Main.errorCount++;
+        }
         ast.type = function.result;
         return ast.type;
     }
@@ -365,8 +370,6 @@ public class TypesPrint implements TypesTypeVisitor
         if (methodField == null || !(methodField.type instanceof FUNCTION)) {
             System.out.println("ERROR: method not found: " + ast.method);
             Semant.Main.errorCount++;
-           ast.type = new VOID();
-            return ast.type;
         }
 
         FUNCTION function = (FUNCTION) methodField.type;
@@ -389,6 +392,11 @@ public class TypesPrint implements TypesTypeVisitor
                 System.out.println("ERROR incompatible argument type");
                 Semant.Main.errorCount++;
             }
+        }
+
+        if (formals.hasNext() || args.hasNext()) {
+            System.out.println("ERROR <exact text from the handout>");
+            Semant.Main.errorCount++;
         }
         ast.type = new VOID();
         return ast.type;

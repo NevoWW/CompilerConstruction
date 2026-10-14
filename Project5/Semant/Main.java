@@ -227,7 +227,7 @@ public class Main {
         params.add(new Formal(new IntegerType(), "x"));
         xinuMethods.add(new MethodDecl(new IntegerType(), false, "printint", params,
                 new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
-        xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method3", params,
+        xinuMethods.add(new MethodDecl(new IntegerType(), false, "readint", params,
                 new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
     
         params = new java.util.LinkedList<Formal>();
@@ -239,8 +239,8 @@ public class Main {
                 new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
     
         params = new java.util.LinkedList<Formal>();
-        params.add(new Formal(new IdentifierType("TODO_ClassName"), "TODO_param"));
-        xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method7", params,
+        params.add(new Formal(new IdentifierType("println"), "sl"));
+        xinuMethods.add(new MethodDecl(new IntegerType(), false, "println", params,
                 new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
     
         for (MethodDecl md : xinuMethods)

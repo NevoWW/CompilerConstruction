@@ -7,6 +7,9 @@ class Inheritence{
     Xinu.printint(new b().a());
 
     Xinu.print("5");
+	Xinu.println("5");
+	Xinu.readint(5);
+
 
     }
 }
