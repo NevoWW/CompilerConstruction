@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 public class PrintTypeVisitor implements TypeVisitor
 {
     PrintWriter out;
-    public int indentCount = 0;
+    public static int indentCount = 0;
 
     public PrintTypeVisitor(PrintWriter out)
     {
@@ -69,7 +69,7 @@ public class PrintTypeVisitor implements TypeVisitor
 	}
 
   public void visit(CLASS c){
-		indent();
+		// indent();
 		out.print("CLASS(" + c.name);
         indentCount++;
         indent();
@@ -91,7 +91,7 @@ public class PrintTypeVisitor implements TypeVisitor
 
         indentCount--;
         out.print(")");
-        indent();
+        // indent();
 	}
     public void visit(FIELD f){
 

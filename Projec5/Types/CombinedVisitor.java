@@ -3,12 +3,12 @@ package Types;
 
 import java.io.PrintWriter;
 import Absyn.*;
+import static Types.PrintTypeVisitor.indentCount;
 
 public class CombinedVisitor implements Visitor {
     private PrintWriter out;
     private TypesPrint checker;
     private PrintTypeVisitor typePrinter;
-    public int indentCount = 0;
 
     public CombinedVisitor(PrintWriter out, TypesPrint checker) {
         this.out = out;
@@ -70,11 +70,13 @@ public class CombinedVisitor implements Visitor {
         visit(ast.fields);
         visit(ast.methods);
 
+        // if (ast.checkType != null) {
+            // indent();
+            // ast.checkType.accept(typePrinter);
+        // }
+        printType(ast.checkType);
         indentCount--;
         out.print(")");
-        if (ast.checkType != null) {
-            ast.checkType.accept(typePrinter);
-        }
     }
 
     public void visit(ThreadDecl ast) {
@@ -114,11 +116,12 @@ public class CombinedVisitor implements Visitor {
         if (ast.returnVal != null) {
             ast.returnVal.accept(this);
         } 
-        if (ast.checkType != null) {
-            indent();
-            ast.checkType.accept(typePrinter);
-        }
-
+        // if (ast.checkType != null) {
+        //     indent();
+        //     ast.checkType.accept(typePrinter);
+        //     printType(ast.checkType);
+        // }
+        printType(ast.checkType);
         indentCount--;
         out.print(")");
     }
@@ -194,7 +197,7 @@ public class CombinedVisitor implements Visitor {
 
         indentCount--;
         out.print(")");
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(FieldExpr ast) {
@@ -204,11 +207,14 @@ public class CombinedVisitor implements Visitor {
 
         ast.target.accept(this);
 
-        indentCount--;
         indent();
-        out.print(" " + ast.field + ")");
+        out.print(ast.field);
+        indent();
+        out.print(ast.typeIndex);
 
-        printType(ast.type);
+        indentCount--;
+        out.print(")");
+
     }
 
     public void visit(CallExpr ast) {
@@ -219,10 +225,12 @@ public class CombinedVisitor implements Visitor {
         indent();
         out.print(ast.method);
         visit(ast.args);
+         indent();
+        out.print(ast.typeIndex);
         indentCount--;
         out.print(")");
 
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(NullExpr ast) {
@@ -238,7 +246,7 @@ public class CombinedVisitor implements Visitor {
     public void visit(IdentifierExpr ast) {
         indent();
         out.print("IdentifierExpr(" + ast.id + ")");
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(VarDecl ast) {
@@ -247,14 +255,14 @@ public class CombinedVisitor implements Visitor {
         ast.type.accept(this);
         out.print(" " + ast.name);
         if (ast.init == null) {
-            out.print(" null");
+            out.print(" null ");
         } else {
             ast.init.accept(this);
         }
 
-        if (ast.typeInfo != null) {
-            printType(ast.typeInfo);
-        }
+        indentCount++;
+        printType(ast.typeInfo);
+        indentCount--;
 
         out.print(")");
     }
@@ -270,7 +278,7 @@ public class CombinedVisitor implements Visitor {
         indentCount--;
         out.print(")");
 
-        printType(ast.type2);
+        // printType(ast.type2);
     }
 
     public void visit(NewObjectExpr ast) {
@@ -279,7 +287,7 @@ public class CombinedVisitor implements Visitor {
         ast.type.accept(this);
         out.print(")");
 
-        printType(ast.type2);
+        // printType(ast.type2);
     }
 
     public void visit(XinuCallExpr ast) {
@@ -292,6 +300,8 @@ public class CombinedVisitor implements Visitor {
 
         indentCount--;
         out.print(")");
+
+        printType(ast.type);
     }
 
     public void visit(XinuCallStmt ast) {
@@ -412,7 +422,7 @@ public class CombinedVisitor implements Visitor {
 
         indentCount--;
         out.print(")");
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(GreaterExpr ast) {
@@ -425,7 +435,7 @@ public class CombinedVisitor implements Visitor {
 
         indentCount--;
         out.print(")");
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(LesserExpr ast) {
@@ -438,7 +448,7 @@ public class CombinedVisitor implements Visitor {
 
         indentCount--;
         out.print(")");
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(AddExpr ast) {
@@ -451,7 +461,7 @@ public class CombinedVisitor implements Visitor {
 
         indentCount--;
         out.print(")");
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(SubExpr ast) {
@@ -464,7 +474,7 @@ public class CombinedVisitor implements Visitor {
 
         indentCount--;
         out.print(")");
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(MulExpr ast) {
@@ -477,7 +487,7 @@ public class CombinedVisitor implements Visitor {
 
         indentCount--;
         out.print(")");
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(DivExpr ast) {
@@ -490,7 +500,7 @@ public class CombinedVisitor implements Visitor {
 
         indentCount--;
         out.print(")");
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(NotExpr ast) {
@@ -502,7 +512,7 @@ public class CombinedVisitor implements Visitor {
 
         indentCount--;
         out.print(")");
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(NegExpr ast) {
@@ -514,6 +524,6 @@ public class CombinedVisitor implements Visitor {
 
         indentCount--;
         out.print(")");
-        printType(ast.type);
+        // printType(ast.type);
     }
 }

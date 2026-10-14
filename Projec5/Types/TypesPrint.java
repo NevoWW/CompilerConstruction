@@ -86,8 +86,39 @@ public class TypesPrint implements TypesTypeVisitor
     }
 
     public Types.Type visit(FieldExpr ast) {
+        Type targetType = ast.target.accept(this);
 
-        return new VOID();
+        if (targetType instanceof ARRAY && ast.field.equals("length")) {
+            ast.typeIndex = -1;
+            ast.type = new INT();
+            return ast.type;
+        }
+
+        if(!(targetType instanceof OBJECT)) {
+            ast.type = new VOID();
+            return ast.type;
+        }
+        FIELD methodField = ((OBJECT) targetType).methods.get(ast.field);
+
+        if (methodField == null || !(methodField.type instanceof FUNCTION)) {
+            System.out.println("ERROR: method not found: " + ast.field);
+            Semant.Main.errorCount++;
+            ast.type = new VOID();
+            return ast.type;
+        }
+
+        FUNCTION function = (FUNCTION) methodField.type;
+        ast.typeIndex = methodField.index;
+
+        if (!targetType.coerceTo(function.self)) {
+            System.out.println("ERROR incompatible object type");
+            Semant.Main.errorCount++;
+            ast.type = new VOID();
+            return ast.type;
+        }
+
+        ast.type = function.result;
+        return ast.type;
     }
 
     public Types.Type visit(CallExpr ast) {
@@ -101,15 +132,18 @@ public class TypesPrint implements TypesTypeVisitor
         if (methodField == null || !(methodField.type instanceof FUNCTION)) {
             System.out.println("ERROR: method not found: " + ast.method);
             Semant.Main.errorCount++;
-            return new VOID();
+           ast.type = new VOID();
+            return ast.type;
         }
 
         FUNCTION function = (FUNCTION) methodField.type;
+        ast.typeIndex = methodField.index;
 
         if (!targetType.coerceTo(function.self)) {
         System.out.println("ERROR incompatible object type");
         Semant.Main.errorCount++;
-        return new VOID();
+        ast.type = new VOID();
+        return ast.type;
     }
 
     // Skip the first formal ("this"), then check actual arguments.
@@ -235,7 +269,7 @@ public class TypesPrint implements TypesTypeVisitor
         Type type = ast.type.accept(this);
         
         typeEnv.put(Symbol.symbol(ast.name), type);
-        ast.typeOfFormal = new VOID();
+        ast.typeOfFormal = type;
         return ast.typeOfFormal;
     }
 
@@ -264,14 +298,88 @@ public class TypesPrint implements TypesTypeVisitor
 
     public Types.Type visit(NewArrayExpr ast) {
         Type t = ast.type.accept(this);
-        ast.type2 = t;
+        ast.type2 = (t instanceof ARRAY) ? t : new ARRAY(t);
         return ast.type2;
     }
-    public Types.Type visit(XinuCallExpr ast) {
-        return new VOID();
+    public Types.Type visit(XinuCallExpr ast) {    
+
+        CLASS xinuClass = (CLASS)typeEnv.get(Symbol.symbol("Xinu"));
+
+        if (xinuClass == null) {
+            System.out.println("ERROR: method not found: " + ast.method);
+            Semant.Main.errorCount++;
+           ast.type = new VOID();
+            return ast.type;
+        }
+
+        FIELD methodField = xinuClass.methods.get(ast.method);
+        
+        if (methodField == null || !(methodField.type instanceof FUNCTION)) {
+            System.out.println("ERROR: method not found: " + ast.method);
+            Semant.Main.errorCount++;
+           ast.type = new VOID();
+            return ast.type;
+        }
+
+        FUNCTION function = (FUNCTION) methodField.type;
+
+        java.util.Iterator<FIELD> formals = function.formals.iterator();
+        java.util.Iterator<Expr> args = ast.args.iterator();
+
+        while (formals.hasNext() && args.hasNext()) {
+            Type formalType = formals.next().type;
+            Type argType = args.next().accept(this);
+
+            if (!argType.coerceTo(formalType)) {
+                System.out.println("ERROR incompatible argument type");
+                Semant.Main.errorCount++;
+            }
+        }
+        ast.type = function.result;
+        return ast.type;
     }
     public Types.Type visit(XinuCallStmt ast) {
-        return new VOID();
+        CLASS xinuClass = (CLASS)typeEnv.get(Symbol.symbol("Xinu"));
+
+        if (xinuClass == null) {
+            System.out.println("ERROR: method not found: " + ast.method);
+            Semant.Main.errorCount++;
+           ast.type = new VOID();
+            return ast.type;
+        }
+
+        FIELD methodField = xinuClass.methods.get(ast.method);
+        
+        if (methodField == null || !(methodField.type instanceof FUNCTION)) {
+            System.out.println("ERROR: method not found: " + ast.method);
+            Semant.Main.errorCount++;
+           ast.type = new VOID();
+            return ast.type;
+        }
+
+        FUNCTION function = (FUNCTION) methodField.type;
+
+        java.util.Iterator<FIELD> formals = function.formals.iterator();
+        java.util.Iterator<Expr> args = ast.args.iterator();
+
+        // java.util.Iterator<FIELD> debugFormals = function.formals.iterator();
+
+        // while (debugFormals.hasNext()) {
+        //     FIELD f = debugFormals.next();
+        //     System.out.println("Formal name: " + f.name + ", type: " + f.type);
+        // }
+
+        while (formals.hasNext() && args.hasNext()) {
+            Type formalType = formals.next().type;
+            Type argType = args.next().accept(this);
+        
+            if (!argType.coerceTo(formalType)) {
+                System.out.println("ERROR incompatible argument type");
+                Semant.Main.errorCount++;
+            }
+        }
+        ast.type = new VOID();
+        return ast.type;
     }
     public Types.Type visit(NotEqExpr ast) {
         Type leftExpr = ast.Expr1.accept(this);
@@ -402,10 +510,12 @@ public class TypesPrint implements TypesTypeVisitor
 
         if (type == null) {
             Semant.Main.errorCount++;
-            return new VOID();
+            ast.type = new VOID();
+            return ast.type;
         }
 
-        return type;
+        ast.type = type;
+        return ast.type;
     }
 
     public Types.Type visit(ClassDecl ast) {

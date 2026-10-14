@@ -11,6 +11,7 @@ public class XinuCallExpr extends Expr
     public String method;
     public LinkedList<Expr> args;
     public int typeIndex;
+    public Types.Type type;
     
     public XinuCallExpr(String method, LinkedList<Expr> args)
     {

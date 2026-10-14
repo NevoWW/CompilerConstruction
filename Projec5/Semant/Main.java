@@ -248,7 +248,6 @@ public class Main {
 			Types.Type ret = md.returnType.accept(new TypesPrint(symClassTable));
 
 			RECORD formals = new RECORD();
-			formals.put(xinuClass.instance, "this");
 			for (Formal p : md.params) {
 				formals.put(p.type.accept(new TypesPrint(symClassTable)), p.name);
 			}

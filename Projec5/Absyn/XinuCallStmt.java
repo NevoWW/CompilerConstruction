@@ -11,6 +11,7 @@ public class XinuCallStmt extends Stmt
     public String method;
     public LinkedList<Expr> args;
     public int typeIndex;
+    public Types.Type type;
     
     public XinuCallStmt(String method, LinkedList<Expr> args)
     {
