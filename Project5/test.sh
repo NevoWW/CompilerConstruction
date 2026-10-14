@@ -23,8 +23,8 @@ make
 echo
 echo Running test 1
 
-java Semant.Main < ~brylow/cosc4400/Projects/tests/Factorial.java > proj.out
-~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/Factorial.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
+java Semant.Main < testcases/Inheritence.java > proj.out
+~brylow/cosc4400/Projects/mjparser testcases/Inheritence.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
 
 diff -u proj.out ref.out
 rm proj.out ref.out

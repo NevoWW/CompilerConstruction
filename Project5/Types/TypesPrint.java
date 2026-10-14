@@ -203,10 +203,17 @@ public class TypesPrint implements TypesTypeVisitor
         if(!ifstmt.coerceTo(check)){
             System.out.println("Incompatible types: " + check +" required, but "+ ifstmt + " found");
             Semant.Main.errorCount++;
+            ast.type = new VOID();
+            return ast.type;
         }
         typeEnv.beginScope();
         Type thenstmt = ast.thenStm.accept(this);
         typeEnv.endScope();
+
+        if(ast.elseStm == null){
+            ast.type = new VOID();
+            return ast.type;
+        }
 
         typeEnv.beginScope();
         Type elsestmt = ast.elseStm.accept(this);
@@ -298,7 +305,12 @@ public class TypesPrint implements TypesTypeVisitor
 
     public Types.Type visit(NewArrayExpr ast) {
         Type t = ast.type.accept(this);
-        ast.type2 = (t instanceof ARRAY) ? t : new ARRAY(t);
+        for (int i = 0; i < ast.dim.size(); i++) {
+            t = new ARRAY(t);
+        }
+
+        // ast.type2 = (t instanceof ARRAY) ? t : new ARRAY(t);
+        ast.type2 = t;
         return ast.type2;
     }
     public Types.Type visit(XinuCallExpr ast) {    
@@ -520,7 +532,7 @@ public class TypesPrint implements TypesTypeVisitor
 
     public Types.Type visit(ClassDecl ast) {
         CLASS saved = currentClass;
-        currentClass = (CLASS) typeEnv.get(Symbol.symbol(ast.name));   // check field name
+        currentClass = (CLASS) typeEnv.get(Symbol.symbol(ast.name)); 
         typeEnv.beginScope();
         typeEnv.put(Symbol.symbol("this"), currentClass.instance);
         for (VarDecl field : ast.fields) field.accept(this);

@@ -1,9 +1,12 @@
 
 class Inheritence{
     
-    public static void main(String[] a){
+    public static void main(String[] args){
+    int[][] name;
 	Xinu.printint(new a().a());
     Xinu.printint(new b().a());
+
+    Xinu.print("5");
 
     }
 }
