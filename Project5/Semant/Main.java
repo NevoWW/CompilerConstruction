@@ -227,25 +227,29 @@ public class Main {
         params.add(new Formal(new IntegerType(), "x"));
         xinuMethods.add(new MethodDecl(new IntegerType(), false, "printint", params,
                 new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
-        xinuMethods.add(new MethodDecl(new IntegerType(), false, "readint", params,
+        xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method2", params,
                 new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
     
         params = new java.util.LinkedList<Formal>();
-        xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method4", params,
+        xinuMethods.add(new MethodDecl(new IntegerType(), false, "readint", params,
                 new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
-        xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method5", params,
+        xinuMethods.add(new MethodDecl(null, false, "println", params,
                 new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
         xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method6", params,
                 new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
     
         params = new java.util.LinkedList<Formal>();
-        params.add(new Formal(new IdentifierType("println"), "sl"));
-        xinuMethods.add(new MethodDecl(new IntegerType(), false, "println", params,
+        params.add(new Formal(new IdentifierType("TODO_method7"), "sl"));
+        xinuMethods.add(new MethodDecl(new IntegerType(), false, "TODO_method7", params,
                 new java.util.LinkedList<VarDecl>(), new java.util.LinkedList<Stmt>(), null));
     
         for (MethodDecl md : xinuMethods)
         {
-			Types.Type ret = md.returnType.accept(new TypesPrint(symClassTable));
+			// Types.Type ret = md.returnType.accept(new TypesPrint(symClassTable));
+
+			Types.Type ret = (md.returnType == null)
+					? new VOID()
+					: md.returnType.accept(new TypesPrint(symClassTable));
 
 			RECORD formals = new RECORD();
 			for (Formal p : md.params) {

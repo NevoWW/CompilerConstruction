@@ -1,12 +1,30 @@
 package Types;
+import java.io.PrintWriter;
+
 import Absyn.*;
 import Symbol.*;
 public class TypesPrint implements TypesTypeVisitor
 {
 	private final Table typeEnv;
     private CLASS currentClass = null;
+    int indentCount = 5;
 
     public TypesPrint(Table typeEnv) {this.typeEnv = typeEnv; }
+    private void indent() {
+        for (int i = 0; i < indentCount; i++) {
+            System.out.print(' ');
+        }
+    }
+    
+   private void printNode(Absyn node) {  
+        PrintWriter writer = new PrintWriter(System.out);
+	    PrintVisitor pv =	new PrintVisitor(writer);
+        pv.indentCount = 9;
+        node.accept(pv);
+        writer.flush();  
+        System.out.println();
+    }
+
     public Types.Type visit(ArrayType ast) {
         return  new ARRAY(ast.base.accept(this));
     }
@@ -164,6 +182,10 @@ public class TypesPrint implements TypesTypeVisitor
             Semant.Main.errorCount++;
         }
     }
+        if (formals.hasNext() || args.hasNext()) {
+            System.out.println("ERROR mismatch in number of arguments:");
+            Semant.Main.errorCount++;
+        }
         ast.type = function.result;
         return ast.type;
 
@@ -349,7 +371,7 @@ public class TypesPrint implements TypesTypeVisitor
         }
 
         if (formals.hasNext() || args.hasNext()) {
-            System.out.println("ERROR <exact text from the handout>");
+            System.out.println("ERROR mismatch in number of arguments:");
             Semant.Main.errorCount++;
         }
         ast.type = function.result;
@@ -395,7 +417,8 @@ public class TypesPrint implements TypesTypeVisitor
         }
 
         if (formals.hasNext() || args.hasNext()) {
-            System.out.println("ERROR <exact text from the handout>");
+            System.out.print("ERROR mismatch in number of arguments:");
+            printNode(ast);
             Semant.Main.errorCount++;
         }
         ast.type = new VOID();

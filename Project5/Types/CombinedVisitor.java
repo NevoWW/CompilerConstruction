@@ -147,7 +147,7 @@ public class CombinedVisitor implements Visitor {
         ast.Expr1.accept(this);
         ast.Expr2.accept(this);
 
-        printType(ast.type);
+        // printType(ast.type);
 
         indentCount--;
         out.print(")");
@@ -371,7 +371,7 @@ public class CombinedVisitor implements Visitor {
     public void visit(IntegerLiteral ast) {
         indent();
         out.print("IntegerLiteral(" + ast.value + ")");
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(StringLiteral ast) {
