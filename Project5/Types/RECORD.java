@@ -32,7 +32,7 @@ public class RECORD extends Type implements Iterable<FIELD>
       FIELD old = map.get(name);
       if (old == null) return put(type, name);  
       if (!sameMethod(old.type, type)) {
-					System.out.println("ERROR incompatible method override: " + parentCl + " in class " + curCl +": line not available");
+					System.out.println("ERROR incompatible method override: " + name + " in class " + curCl +": line not available");
 					Semant.Main.errorCount++;
 				}      
       // if(old.type != type){

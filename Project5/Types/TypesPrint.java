@@ -7,21 +7,18 @@ public class TypesPrint implements TypesTypeVisitor
 {
 	private final Table typeEnv;
     private CLASS currentClass = null;
-    int indentCount = 5;
 
     public TypesPrint(Table typeEnv) {this.typeEnv = typeEnv; }
-    private void indent() {
-        for (int i = 0; i < indentCount; i++) {
-            System.out.print(' ');
-        }
-    }
+
     
    private void printNode(Absyn node) {  
         PrintWriter writer = new PrintWriter(System.out);
 	    PrintVisitor pv =	new PrintVisitor(writer);
+        int temp = pv.indentCount;
         pv.indentCount = 9;
         node.accept(pv);
         writer.flush();  
+        pv.indentCount = temp;
         System.out.println();
     }
 
@@ -76,7 +73,8 @@ public class TypesPrint implements TypesTypeVisitor
         Type check = new INT();
 
         if (!indexType.coerceTo(check)) {
-            System.out.println("Incompatible types: " + check + " required, but " + indexType + " found");
+            System.out.println("ERROR incompatible types: " + check + " required, but " + indexType + " found:");
+            printNode(ast);
             Semant.Main.errorCount++;
         }
 
@@ -113,29 +111,30 @@ public class TypesPrint implements TypesTypeVisitor
         }
 
         if(!(targetType instanceof OBJECT)) {
+            System.out.println("ERROR target not object, type " + targetType);
+            printNode(ast);
             ast.type = new VOID();
             return ast.type;
         }
-        FIELD methodField = ((OBJECT) targetType).methods.get(ast.field);
+        FIELD methodField = ((OBJECT) targetType).fields.get(ast.field);
 
-        if (methodField == null || !(methodField.type instanceof FUNCTION)) {
+        if (methodField == null) {
             System.out.println("ERROR: method not found: " + ast.field);
             Semant.Main.errorCount++;
             ast.type = new VOID();
             return ast.type;
         }
 
-        FUNCTION function = (FUNCTION) methodField.type;
         ast.typeIndex = methodField.index;
 
-        if (!targetType.coerceTo(function.self)) {
-            System.out.println("ERROR incompatible object type");
-            Semant.Main.errorCount++;
-            ast.type = new VOID();
-            return ast.type;
-        }
+        // if (!targetType.coerceTo(function.self)) {
+        //     System.out.println("ERROR incompatible object type");
+        //     Semant.Main.errorCount++;
+        //     ast.type = new VOID();
+        //     return ast.type;
+        // }
 
-        ast.type = function.result;
+        ast.type = methodField.type;
         return ast.type;
     }
 
@@ -143,7 +142,12 @@ public class TypesPrint implements TypesTypeVisitor
 
         Type targetType = ast.target.accept(this);
 
-        if(!(targetType instanceof OBJECT)) return new VOID();
+        if(!(targetType instanceof OBJECT)){
+            System.out.println("ERROR target not object, type " + targetType);
+            printNode(ast);
+            ast.type = new VOID();
+            return ast.type;
+        } 
         
         FIELD methodField = ((OBJECT) targetType).methods.get(ast.method);
 
@@ -178,12 +182,13 @@ public class TypesPrint implements TypesTypeVisitor
         Type argType = args.next().accept(this);
 
          if (!argType.coerceTo(formalType)) {
-            System.out.println("ERROR incompatible argument type");
+            System.out.println("ERROR incompatible type:");
             Semant.Main.errorCount++;
         }
     }
         if (formals.hasNext() || args.hasNext()) {
-            System.out.println("ERROR mismatch in number of arguments:");
+            System.out.print("ERROR mismatch in number of arguments:");
+            printNode(ast);
             Semant.Main.errorCount++;
         }
         ast.type = function.result;
@@ -194,8 +199,13 @@ public class TypesPrint implements TypesTypeVisitor
     public Types.Type visit(AssignStmt ast) {
         Type leftType = ast.lhs.accept(this);
         Type rightType = ast.rhs.accept(this);
+        if(leftType == null || rightType == null){
+            ast.type = new NIL();
+            return ast.type;
+        }
         if (!rightType.coerceTo(leftType)){
-            System.out.println("Incompatible types: " + leftType +" required, but "+ rightType + " found");
+            System.out.println("ERROR incompatible types: " + leftType +" required, but "+ rightType + " found:");
+            printNode(ast);
             Semant.Main.errorCount++;
             
         }
@@ -223,7 +233,8 @@ public class TypesPrint implements TypesTypeVisitor
         Type ifstmt = ast.test.accept(this);
         BOOLEAN check = new BOOLEAN();
         if(!ifstmt.coerceTo(check)){
-            System.out.println("Incompatible types: " + check +" required, but "+ ifstmt + " found");
+            System.out.println("ERROR incompatible types: " + check +" required, but "+ ifstmt + " found:");
+            printNode(ast);
             Semant.Main.errorCount++;
             ast.type = new VOID();
             return ast.type;
@@ -371,7 +382,8 @@ public class TypesPrint implements TypesTypeVisitor
         }
 
         if (formals.hasNext() || args.hasNext()) {
-            System.out.println("ERROR mismatch in number of arguments:");
+            System.out.print("ERROR mismatch in number of arguments:");
+            // printNode(ast);
             Semant.Main.errorCount++;
         }
         ast.type = function.result;
@@ -467,7 +479,8 @@ public class TypesPrint implements TypesTypeVisitor
         Type rightExpr = ast.Expr2.accept(this);
         Type check = new INT();
         if (!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)) {
-            System.out.println("ERROR operator + cannot be applied to " + leftExpr + ", " + rightExpr);
+            System.out.println("ERROR operator + cannot be applied to " + leftExpr + ", " + rightExpr + ":");
+            printNode(ast);
             Semant.Main.errorCount++;
         }
         ast.type = new INT();
@@ -478,7 +491,8 @@ public class TypesPrint implements TypesTypeVisitor
         Type rightExpr = ast.Expr2.accept(this);
         Type check = new INT();
         if(!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)){
-            System.out.println("ERROR operator - cannot be applied to " + leftExpr + ", " + rightExpr);
+            System.out.println("ERROR operator - cannot be applied to " + leftExpr + ", " + rightExpr + ":");
+            printNode(ast);
             Semant.Main.errorCount++;
         }
         ast.type = new INT();
@@ -489,7 +503,8 @@ public class TypesPrint implements TypesTypeVisitor
         Type rightExpr = ast.Expr2.accept(this);
         Type check = new INT();
         if(!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)){
-            System.out.println("ERROR operator * cannot be applied to " + leftExpr + ", " + rightExpr);
+            System.out.println("ERROR operator * cannot be applied to " + leftExpr + ", " + rightExpr + ":");
+            printNode(ast);
             Semant.Main.errorCount++;
         }
         ast.type = new INT();
@@ -501,7 +516,8 @@ public class TypesPrint implements TypesTypeVisitor
         Type rightExpr = ast.Expr2.accept(this);
         Type check = new INT();
         if(!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)){
-            System.out.println("ERROR operator / cannot be applied to " + leftExpr + ", " + rightExpr);
+            System.out.println("ERROR operator / cannot be applied to " + leftExpr + ", " + rightExpr + ":");
+            printNode(ast);
             Semant.Main.errorCount++;
         }
         ast.type = new INT();
@@ -552,6 +568,8 @@ public class TypesPrint implements TypesTypeVisitor
         Types.Type type = (Types.Type) typeEnv.get(key);
 
         if (type == null) {
+            System.out.println("ERROR cannot resolve symbol " + ast.id);
+            printNode(ast);
             Semant.Main.errorCount++;
             ast.type = new VOID();
             return ast.type;
@@ -566,6 +584,7 @@ public class TypesPrint implements TypesTypeVisitor
         currentClass = (CLASS) typeEnv.get(Symbol.symbol(ast.name)); 
         typeEnv.beginScope();
         typeEnv.put(Symbol.symbol("this"), currentClass.instance);
+        for (FIELD f : currentClass.instance.fields) { typeEnv.put(Symbol.symbol(f.name), f.type);}
         for (VarDecl field : ast.fields) field.accept(this);
         for (MethodDecl method : ast.methods) method.accept(this);
         typeEnv.endScope();

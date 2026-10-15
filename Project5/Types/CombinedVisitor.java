@@ -301,7 +301,7 @@ public class CombinedVisitor implements Visitor {
         indentCount--;
         out.print(")");
 
-        printType(ast.type);
+        // printType(ast.type);
     }
 
     public void visit(XinuCallStmt ast) {
