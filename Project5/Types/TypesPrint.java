@@ -1,8 +1,7 @@
 package Types;
-import java.io.PrintWriter;
-
 import Absyn.*;
 import Symbol.*;
+import java.io.PrintWriter;
 public class TypesPrint implements TypesTypeVisitor
 {
 	private final Table typeEnv;
@@ -48,7 +47,8 @@ public class TypesPrint implements TypesTypeVisitor
         Type rightExpr = ast.Expr2.accept(this);
         Type check = new BOOLEAN();
         if(!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)){
-            System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+            System.out.println("ERROR incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+            printNode(ast);
             Semant.Main.errorCount++;
         }
 
@@ -60,7 +60,8 @@ public class TypesPrint implements TypesTypeVisitor
         Type rightExpr = ast.Expr2.accept(this);
         Type check = new BOOLEAN();
         if(!leftExpr.coerceTo(check) || !rightExpr.coerceTo(check)){
-            System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+            System.out.println("ERROR incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+            printNode(ast);
             Semant.Main.errorCount++;
         }
         ast.type = new BOOLEAN();
@@ -217,7 +218,8 @@ public class TypesPrint implements TypesTypeVisitor
         Type test = ast.test.accept(this);
         Type check = new BOOLEAN();
         if(!test.coerceTo(check)){
-            System.out.println("Incompatible types: " + check +" required, but "+ test + " found");
+            System.out.println("ERROR incompatible types: " + check +" required, but "+ test + " found");
+            printNode(ast);
             Semant.Main.errorCount++;
         }
         typeEnv.beginScope();
@@ -296,7 +298,8 @@ public class TypesPrint implements TypesTypeVisitor
         if (ast.returnVal != null){
             Type returnValue = ast.returnVal.accept(this);
             if(!returnValue.coerceTo(returnType)){
-                System.out.println("Incompatible types: " + returnType +" required, but "+ returnValue + " found");
+                System.out.println("ERROR incompatible types: " + returnType +" required, but "+ returnValue + " found");
+                printNode(ast);
                 Semant.Main.errorCount++;
             }
         }
@@ -319,7 +322,8 @@ public class TypesPrint implements TypesTypeVisitor
         if(ast.init != null){
             Type varExpr = ast.init.accept(this);
             if(!varExpr.coerceTo(typeVar)){
-                System.out.println("Incompatible types: " + typeVar +" required, but "+ varExpr + " found");
+                System.out.println("ERROR incompatible types: " + typeVar +" required, but "+ varExpr + " found");
+                printNode(ast);
                 Semant.Main.errorCount++;
             
             }
@@ -376,7 +380,8 @@ public class TypesPrint implements TypesTypeVisitor
             Type argType = args.next().accept(this);
 
             if (!argType.coerceTo(formalType)) {
-                System.out.println("ERROR incompatible argument type");
+                System.out.println("ERROR incompatible types: "+ argType +" required, but "+ formalType +" found:");
+                printNode(ast);
                 Semant.Main.errorCount++;
             }
         }
@@ -423,7 +428,8 @@ public class TypesPrint implements TypesTypeVisitor
             Type argType = args.next().accept(this);
         
             if (!argType.coerceTo(formalType)) {
-                System.out.println("ERROR incompatible argument type");
+                System.out.println("ERROR incompatible types: "+ argType +" required, but "+ formalType +" found:");
+                printNode(ast);
                 Semant.Main.errorCount++;
             }
         }
@@ -440,7 +446,8 @@ public class TypesPrint implements TypesTypeVisitor
         Type leftExpr = ast.Expr1.accept(this);
         Type rightExpr = ast.Expr2.accept(this);
         if(!leftExpr.coerceTo(rightExpr) || !rightExpr.coerceTo(leftExpr)){
-            System.out.println("Incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+            System.out.println("ERROR incompatible types: " + leftExpr +" required, but "+ rightExpr + " found");
+            printNode(ast);
             Semant.Main.errorCount++;
         }
         ast.type = new BOOLEAN();
