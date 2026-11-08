@@ -28,9 +28,18 @@ SYMBOLSRC = $(wildcard Symbol/*.java)
 TYPESSRC = $(wildcard Types/*.java)
 SEMANTSRC = $(wildcard Semant/*.java)
 
+FRAMESRC = $(wildcard Frame/*.java)
+RISCVSRC = $(wildcard Riscv/*.java)
+TEMPSRC = $(wildcard Temp/*.java)
+TRANSLATESRC = $(wildcard Translate/*.java)
+TREESRC = $(wildcard Tree/*.java)
+
+
 CHECKSRC = $(SYMBOLSRC) $(TYPESSRC) $(SEMANTSRC)
 
-all:	$(PARSEDIR)/$(MJ_PARSER).java $(PARSESRC:.java=.class) $(CHECKSRC:.java=.class)
+TRSSRC = $(FRAMESRC) $(RISCVSRC) $(TEMPSRC) $(TRANSLATESRC) $(TREESRC)
+
+all:	$(PARSEDIR)/$(MJ_PARSER).java $(PARSESRC:.java=.class) $(CHECKSRC:.java=.class) $(TRSSRC:.java=.class)
 
 $(PARSEDIR)/$(MJ_PARSER).java: $(PARSEDIR)/$(MJ_PARSER).jj
 	cd $(PARSEDIR); ${JAVACC} $(MJ_PARSER).jj;
@@ -40,7 +49,7 @@ $(PARSEDIR)/$(MJ_PARSER).java: $(PARSEDIR)/$(MJ_PARSER).jj
 	${JAVAC} ${JFLAGS} $<
 
 clean:
-	rm -f $(PARSESRC:.java=.class) $(CHECKSRC:.java=.class) \
+	rm -f $(PARSESRC:.java=.class) $(CHECKSRC:.java=.class) $(TRSSRC:.java=.class) \
 		$(MJ_JAVACCGEN) $(MJ_JAVACCGEN:.java=.class)\
                 '$(PARSEDIR)/$(MJ_PARSER)$$JJCalls.class' \
                 '$(PARSEDIR)/$(MJ_PARSER)$$LookaheadSuccess.class' 
