@@ -254,13 +254,14 @@ public class CombinedVisitor implements Visitor {
         out.print("VarDecl(");
         ast.type.accept(this);
         out.print(" " + ast.name);
+        indentCount++;
         if (ast.init == null) {
             out.print(" null ");
         } else {
             ast.init.accept(this);
+            out.print(" ");
         }
 
-        indentCount++;
         printType(ast.typeInfo);
         indentCount--;
 
@@ -360,7 +361,7 @@ public class CombinedVisitor implements Visitor {
 		if (null == ast.elseStm)
 		{
 			indent();
-			out.print(" null");   
+			out.print("null");   
 		} 
 		else
 	    { ast.elseStm.accept(this); }
