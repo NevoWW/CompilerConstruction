@@ -11,4 +11,6 @@ public abstract class Absyn implements Visitable
     public abstract void accept(Visitor v);
 
     public abstract Types.Type accept(Types.TypesTypeVisitor v);
+
+    public abstract Translate.Exp accept(Translate.Translate v);
 }

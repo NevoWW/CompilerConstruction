@@ -12,4 +12,5 @@ public interface Visitable
 
     public Types.Type accept(Types.TypesTypeVisitor v);
 
+    public Translate.Exp accept(Translate.Translate v);
 }

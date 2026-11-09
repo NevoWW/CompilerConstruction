@@ -12,4 +12,6 @@ public abstract class BinOpExpr extends Expr
     public abstract void accept(Visitor v);
 
     public abstract Types.Type accept(Types.TypesTypeVisitor v);
+
+    public abstract Translate.Exp accept(Translate.Translate v);
 }

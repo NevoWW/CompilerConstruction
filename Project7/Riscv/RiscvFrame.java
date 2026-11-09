@@ -26,6 +26,8 @@ public class RiscvFrame extends Frame.Frame
     // Bytes per word on target architecture
     private static final int wordSize = 4;
 
+    public List<Frame.Access> actuals;
+
     // Frame API provides this for new frames to be allocated per MJ method
     public Frame.Frame newFrame(Symbol name) 
     {
@@ -346,11 +348,11 @@ public class RiscvFrame extends Frame.Frame
     {
     }
 
-    public void procEntryExit2(List<Assem.Instr> body)
-    {
-    }
+    // public void procEntryExit2(List<Assem.Instr> body)
+    // {
+    // }
 
-    public void procEntryExit3(List<Assem.Instr> body)
-    {
-    }
+    // public void procEntryExit3(List<Assem.Instr> body)
+    // {
+    // }
 }

@@ -2,6 +2,14 @@
  * All rights reserved.  */
 package Translate;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import Temp.Label;
+import Temp.Temp;
+import Symbol.*;
+import Types.CLASS;
+
 /**
  * Implements translation of abstract syntax expressions
  * into intermediate trees.
@@ -16,29 +24,29 @@ public class Translate implements Absyn.TreeVisitor
 	
     private static Tree.Exp CONST(int value)  { return new Tree.CONST(value); }
     private static Tree.Exp NAME(Label label) {	return new Tree.NAME(label); }
-    private static Tree.Exp TEMP(Temp temp)   {	return new Tree.TEMP(temp); }
+    static Tree.Exp TEMP(Temp temp)   {	return new Tree.TEMP(temp); }
     private static Tree.Exp BINOP(int binop, Tree.Exp left, Tree.Exp right) 
     {   return new Tree.BINOP(binop, left, right);   }
     private static Tree.Exp MEM(Tree.Exp exp) {	return new Tree.MEM(exp); }
     private static Tree.Exp CALL(Tree.Exp func, List args) 
     {	return new Tree.CALL(func, args);   }
-    private static Tree.Exp ESEQ(Tree.Stm stm, Tree.Exp exp)
+    static Tree.Exp ESEQ(Tree.Stm stm, Tree.Exp exp)
     {
 	if (stm == null) return exp;
 	return new Tree.ESEQ(stm, exp);
     }
 	
-    private static Tree.Stm MOVE(Tree.Exp dst, Tree.Exp src) 
+    static Tree.Stm MOVE(Tree.Exp dst, Tree.Exp src) 
     {
 	return new Tree.MOVE(dst, src);
     }
     private static Tree.Stm EXP(Tree.Exp exp) {	return new Tree.EXP(exp); }
-    private static Tree.Stm JUMP(Label target) 
+    static Tree.Stm JUMP(Label target) 
     {	return new Tree.JUMP(target);   }
     private static Tree.Stm CJUMP(int relop, Tree.Exp l, Tree.Exp r,
 				  Label t, Label f)
     {	return new Tree.CJUMP(relop, l, r, t, f);   }
-    private static Tree.Stm SEQ(Tree.Stm left, Tree.Stm right) 
+    static Tree.Stm SEQ(Tree.Stm left, Tree.Stm right) 
     {
 	if (left == null)
 	    return right;
@@ -46,7 +54,7 @@ public class Translate implements Absyn.TreeVisitor
 	    return left;
 	return new Tree.SEQ(left, right);
     }
-    private static Tree.Stm LABEL(Label label) 
+    static Tree.Stm LABEL(Label label) 
     {
 	return new Tree.LABEL(label);
     }
@@ -58,7 +66,7 @@ public class Translate implements Absyn.TreeVisitor
     private HashMap<Symbol, Label>  methodEnv = new HashMap<Symbol, Label>();
     private HashMap<String, Label>  staticEnv = new HashMap<String, Label>();
     private HashMap<String, Label>  vtableEnv = new HashMap<String, Label>();
-    private Table<Frame.Access>     varEnv    = new Table<Frame.Access>();
+    private Table/*<Frame.Access> */     varEnv    = new Table/*<Frame.Access>*/();
 	
     public Exp visit(Absyn.Program n)
     {
@@ -146,7 +154,7 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.NegExpr e)
     {
 	return new Ex(BINOP(Tree.BINOP.MINUS, 
-			    CONST(0), e.e1.accept(this).unEx()));
+			    CONST(0), e.Expr1.accept(this).unEx()));
     }
 
     public Exp visit(Absyn.AndExpr e) 
@@ -177,7 +185,7 @@ public class Translate implements Absyn.TreeVisitor
 
     public Exp visit(Absyn.NotExpr e)
     {
-        Exp exp = e.e1.accept(this);
+        Exp exp = e.Expr1.accept(this);
         return new IfThenElseExp(exp, new Ex(CONST(0)), new Ex(CONST(1)));
     }
 
@@ -225,7 +233,7 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.StringLiteral e) 
     {
 	String result = e.value.intern();
-	Label lab = strings.get(u);
+	Label lab = strings.get(result);
 	if (lab != null) return new Ex(NAME(lab));
 	lab = new Label();
 	strings.put(result, lab);
@@ -246,8 +254,15 @@ public class Translate implements Absyn.TreeVisitor
 
     public Exp visit(Absyn.FieldExpr e) 
     {
-    	// TODO
-	return null;
+    	int index		= e.typeIndex;
+        Tree.Exp exp	= e.target.accept(this).unEx();
+        Label	bad		= frame.badPtr();
+        Label	ok  	= new Label();
+        Temp result	= new Temp();
+        return new Ex(ESEQ(SEQ(MOVE(TEMP(result), exp),
+            CJUMP(Tree.CJUMP.EQ, TEMP(result), CONST(0),bad,ok)),
+            ESEQ(LABEL(ok), MEM(BINOP(Tree.BINOP.PLUS, TEMP(result), CONST(index * frame.wordSize()))))));
+
     }
 
     public Exp visit(Absyn.IdentifierExpr e) 

@@ -2,7 +2,10 @@
  * All rights reserved.  */
 
 package Translate;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.util.Iterator;
 
 //import Semant.*;
@@ -19,64 +22,49 @@ public class Main
 {
     public static void main(String args[])
     {
-	java.io.Reader reader = null;
+		InputStreamReader isr = new InputStreamReader(System.in);
+        Reader reader = new BufferedReader(isr);
+
+        try
+        {
+            Absyn.Program parse = new MiniJavaParser(reader).Goal();
+
+            Translate translate = new Translate(new Riscv.RiscvFrame());
+            parse.accept(translate);
 		
-	try
-	{
-	    reader = new java.io.FileReader(args[i]);
-	}
-	catch (java.io.FileNotFoundException fnfe)
-	{
-	    System.err.println("File Not Found: " + args[i]);
-	    System.exit(-1);
-	}
-		
-	if (null == reader)
-	{
-	    System.err.println("Usage: Translate file.java");
-	    System.exit(-2);
-	}   
-		
-	Absyn.Program parse = null;
-	try
-	{
-	    parse = new Parse.ReadTypes(reader).Program();
-	}
-	catch (ParseException p)
-	{
-	    System.err.println(p.toString());
-	    System.exit(-1);
-	}
-		
-	Translate translate = new Translate(new Arm.ArmFrame());
-	parse.accept(translate);
-		
-	PrintWriter writer = new PrintWriter(System.out);
-		
-	for (Iterator frags = translate.results().iterator(); 
-	     frags.hasNext(); ) 
-	{
-	    Frag f = (Frag)frags.next();
-	    if (f instanceof DataFrag) 
-	    {
-		writer.println("DataFrag(");
-		writer.println(f);
-		writer.println(")");
-	    } 
-	    else 
-	    {
-		writer.println("ProcFrag(");
-		ProcFrag p = (ProcFrag)f;
-		p.frame.printFrame(writer);
-		if (p.body != null) 
+		PrintWriter writer = new PrintWriter(System.out);
+			
+		for (Iterator frags = translate.results().iterator(); 
+			frags.hasNext(); ) 
 		{
-		    new Tree.Print(writer, p.body);
-		    writer.println();
+			Frag f = (Frag)frags.next();
+			if (f instanceof DataFrag) 
+			{
+				writer.println("DataFrag(");
+				writer.println(f);
+				writer.println(")");
+			} 
+			else 
+			{
+				writer.println("ProcFrag(");
+				ProcFrag p = (ProcFrag)f;
+				p.frame.printFrame(writer);
+				if (p.body != null) 
+				{
+					new Tree.Print(writer, p.body);
+					writer.println();
+				}
+				writer.println(")");
+			}
+		}  
+		writer.flush();
+	
 		}
-		writer.println(")");
-	    }
-	}  
-	writer.flush();
-    }
+		catch (ParseException p)
+		{
+			System.out.println(p.toString());
+			System.exit(-1);
+		}
+	}
 }	
 

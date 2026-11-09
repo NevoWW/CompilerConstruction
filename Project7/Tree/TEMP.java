@@ -17,4 +17,5 @@ public class TEMP extends Exp
 		//System.out.println("\n Call to TEMP : "+t.toString());
 	}
     public void accept(IntVisitor v, int d) { v.visit(this, d); }
+	public void accept(CodeVisitor v) { v.visit(this); }
 }

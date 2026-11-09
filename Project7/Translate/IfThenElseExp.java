@@ -3,6 +3,7 @@
 package Translate;
 import Temp.Temp;
 import Temp.Label;
+import static Translate.Translate.*;
 
 /**
  * Represents an If-Then-Else Expression, a special case that can be 
@@ -20,7 +21,12 @@ public class IfThenElseExp extends Exp {
 
     Tree.Stm unCx(Label tt, Label ff) {
 	// TODO: Check for optimizations
+		Label t = new Label();
+		Label f = new Label();
         Tree.Stm condStm = cond.unCx(t, f);
+		Tree.Stm tStm = trueExp.unCx(tt, ff);
+		Tree.Stm fStm = falseExp.unCx(tt, ff);
+
 	return SEQ(condStm,
 		   SEQ(SEQ(LABEL(t), tStm),
 		       SEQ(LABEL(f), fStm)));
