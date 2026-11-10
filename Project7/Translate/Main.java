@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.text.ParseException;
 import java.util.Iterator;
 
 //import Semant.*;
@@ -17,6 +18,15 @@ import java.util.List;
 import java.util.LinkedList;
 
 //import Translate.Translate;
+
+
+/**
+ * COSC 4400 - Project #7
+ * Scanner accepts input from user
+ * @authors [Aleksandro Zhaka, Christian Guzman ]
+ * Instructor [Dennis Brylow]
+ * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, christian.guzmanrivas@marquette.edu]
+ */
 
 public class Main 
 {

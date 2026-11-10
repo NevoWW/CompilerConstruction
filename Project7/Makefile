@@ -34,12 +34,9 @@ TEMPSRC = $(wildcard Temp/*.java)
 TRANSLATESRC = $(wildcard Translate/*.java)
 TREESRC = $(wildcard Tree/*.java)
 
-ASSEMSRC = $(wildcard Assem/*.java)
-CANONSRC = $(wildcard Canon/*.java)
-
 CHECKSRC = $(SYMBOLSRC) $(TYPESSRC) $(SEMANTSRC)
 
-TRSSRC = $(FRAMESRC) $(RISCVSRC) $(TEMPSRC) $(TRANSLATESRC) $(TREESRC) $(ASSEMSRC) $(CANONSRC)
+TRSSRC = $(FRAMESRC) $(RISCVSRC) $(TEMPSRC) $(TRANSLATESRC) $(TREESRC)
 
 all:	$(PARSEDIR)/$(MJ_PARSER).java $(PARSESRC:.java=.class) $(CHECKSRC:.java=.class) $(TRSSRC:.java=.class)
 

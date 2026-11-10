@@ -14,5 +14,4 @@ public class MOVE extends Stm
     public Exp dst, src;
     public MOVE(Exp d, Exp s) { dst=d; src=s; }
     public void accept(IntVisitor v, int d) { v.visit(this, d); }
-    public void accept(CodeVisitor v) { v.visit(this); }
 }

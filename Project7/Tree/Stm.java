@@ -15,5 +15,4 @@ abstract public class Stm implements Hospitable
 
     public abstract void accept(IntVisitor v, int d);
 
-    public abstract void accept(CodeVisitor v);
 }

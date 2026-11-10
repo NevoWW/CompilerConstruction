@@ -23,5 +23,4 @@ public class CJUMP extends Stm
 		ULT=6, ULE=7, UGT=8, UGE=9;
 
     public void accept(IntVisitor v, int d) { v.visit(this, d); }
-    public void accept(CodeVisitor v) { v.visit(this); }
 }

@@ -71,24 +71,46 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.Program n)
     {
 	// TODO
+        for (Absyn.ClassDecl c : n.classes) {
+            c.accept(this);
+        }
 	return null;
     }
     
     public Exp visit(Absyn.ClassDecl c) 
     {
 	// TODO
+        classEnv.put(c.name, c.checkType);
+
+        for (Absyn.MethodDecl m : c.methods)
+            m.accept(this);
 	return null;
     }
 
     public Exp visit(Absyn.ThreadDecl c) 
     {
 	// TODO
+        for (Absyn.MethodDecl m : c.methods)
+            m.accept(this);
 	return null;
     }
 
     public Exp visit(Absyn.MethodDecl m) 
     {
 	// TODO
+        Label name = new Label(m.name);
+        methodEnv.put(Symbol.symbol(m.name), name);
+        for (Absyn.VarDecl v : m.locals)
+        v.accept(this);
+
+    // Body
+        Tree.Stm body = null;
+        for (Absyn.Stmt s : m.stmts)
+            body = SEQ(body, s.accept(this).unNx());
+
+        // Return value goes into the return-value register
+        Tree.Exp ret = m.returnVal.accept(this).unEx();
+        body = SEQ(body, MOVE(TEMP(frame.RV()), ret));
 	return null;
     }
 
@@ -107,6 +129,7 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.VarDecl v) 
     {
 	// TODO
+     
 	return null;
     }
 
@@ -118,25 +141,45 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.AssignStmt s) 
     {
 	// TODO
-	return null;
+        Tree.Exp dst = s.lhs.accept(this).unEx();
+        Tree.Exp src = s.rhs.accept(this).unEx();
+        return new Nx(MOVE(dst, src));
+
     }
 	
     public Exp visit(Absyn.BlockStmt b)
     {
 	// TODO
-	return null;
+    Tree.Stm result = null;
+    for (Absyn.Stmt s : b.stmts) {
+       result = SEQ(result, s.accept(this).unNx());
+    }
+	return new Nx(result);
     }
 
     public Exp visit(Absyn.IfStmt s)
     {
 	// TODO
-	return null;
+        Exp cond = s.test.accept(this);
+        Exp t = s.thenStm.accept(this);
+        Exp f = (s.elseStm == null) ? new Nx(null) : s.elseStm.accept(this);
+        return new IfThenElseExp(cond, t, f);
     }
 
     public Exp visit(Absyn.WhileStmt s)
     {
 	// TODO
-	return null;
+        Exp cond = s.test.accept(this);
+        Tree.Stm t = s.body.accept(this).unNx();
+        Label test = new Label();
+        Label done = new Label();
+        Label body = new Label();
+        return new Nx(
+                SEQ(LABEL(test),
+                SEQ(cond.unCx(body, done),
+                SEQ(LABEL(body),
+                SEQ(t,
+                SEQ(JUMP(test), LABEL(done)))))));
     }
 
     private Exp Ex(int op, Absyn.BinOpExpr e) 
@@ -160,15 +203,17 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.AndExpr e) 
     {
         Exp e1 = e.e1.accept(this);
-	Exp e2 = e.e2.accept(this);
-	// Short-circuit Boolean AND, with false == 0.
-	return new IfThenElseExp(e1, e2, new Ex(CONST(0)));
+        Exp e2 = e.e2.accept(this);
+        // Short-circuit Boolean AND, with false == 0.
+        return new IfThenElseExp(e1, e2, new Ex(CONST(0)));
     }
 
     public Exp visit(Absyn.OrExpr e)
     {
 	// TODO
-	return null;
+	    Exp e1 = e.e1.accept(this);
+        Exp e2 = e.e2.accept(this);
+        return new IfThenElseExp(e1, new Ex(CONST(1)), e2);
     }
 
     private Exp RelCx(int op, Absyn.BinOpExpr e)

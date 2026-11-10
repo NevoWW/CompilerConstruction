@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 
 /**
- * COSC 4400 - Project #3
+ * COSC 4400 - Project #5
  * Scanner accepts input from user
  * @authors [Aleksandro Zhaka, Christian Guzman ]
  * Instructor [Dennis Brylow]
