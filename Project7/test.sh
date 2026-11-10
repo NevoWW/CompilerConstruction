@@ -20,81 +20,83 @@ make
 # SAVE OUTPUT IN FILE 
 # OUR PROJECT > proj.out
 # REFRENCE > ref.out
+rm NQUEENSref
+~brylow/cosc4400/Projects/mjparser testcases/Addtion.java | ~brylow/cosc4400/Projects/mjchecker - |  ~brylow/cosc4400/Projects/mjtranslator - > NQUEENSref.out
 
 # java Semant.Main < testcases/NQueens.java > proj.out
 # ~brylow/cosc4400/Projects/mjparser testcases/NQueens.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
 
-echo
-echo Running test 1
+# echo
+# echo Running test 1
 
-java Semant.Main < testcases/NQueens.java > proj.out
-~brylow/cosc4400/Projects/mjparser testcases/NQueens.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
+# java Semant.Main < testcases/NQueens.java > proj.out
+# ~brylow/cosc4400/Projects/mjparser testcases/NQueens.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
 
-diff -u proj.out ref.out
-rm proj.out ref.out
-echo
+# diff -u proj.out ref.out
+# rm proj.out ref.out
+# echo
 
-echo Done test 1
+# echo Done test 1
 
-echo
-echo Running test 1
+# echo
+# echo Running test 1
 
-java Semant.Main < ~brylow/cosc4400/Projects/tests/TreeVisitor.java > proj.out
-~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/TreeVisitor.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
+# java Semant.Main < ~brylow/cosc4400/Projects/tests/TreeVisitor.java > proj.out
+# ~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/TreeVisitor.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
 
-diff -u proj.out ref.out
-rm proj.out ref.out
-echo
+# diff -u proj.out ref.out
+# rm proj.out ref.out
+# echo
 
-echo Done test 1
+# echo Done test 1
 
-echo
-echo Running test 1
+# echo
+# echo Running test 1
 
-java Semant.Main < ~brylow/cosc4400/Projects/tests/BinarySearch.java > proj.out
-~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/BinarySearch.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
+# java Semant.Main < ~brylow/cosc4400/Projects/tests/BinarySearch.java > proj.out
+# ~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/BinarySearch.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
 
-diff -u proj.out ref.out
-rm proj.out ref.out
-echo
+# diff -u proj.out ref.out
+# rm proj.out ref.out
+# echo
 
-echo Done test 1
+# echo Done test 1
 
-echo
-echo Running test 1
+# echo
+# echo Running test 1
 
-java Semant.Main < ~brylow/cosc4400/Projects/tests/BubbleSort.java > proj.out
-~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/BubbleSort.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
+# java Semant.Main < ~brylow/cosc4400/Projects/tests/BubbleSort.java > proj.out
+# ~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/BubbleSort.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
 
-diff -u proj.out ref.out
-rm proj.out ref.out
-echo
+# diff -u proj.out ref.out
+# rm proj.out ref.out
+# echo
 
-echo Done test 1
+# echo Done test 1
 
-echo
-echo Running test 1
+# echo
+# echo Running test 1
 
-java Semant.Main < ~brylow/cosc4400/Projects/tests/LinearSearch.java > proj.out
-~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/LinearSearch.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
+# java Semant.Main < ~brylow/cosc4400/Projects/tests/LinearSearch.java > proj.out
+# ~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/LinearSearch.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
 
-diff -u proj.out ref.out
-rm proj.out ref.out
-echo
+# diff -u proj.out ref.out
+# rm proj.out ref.out
+# echo
 
-echo Done test 1
+# echo Done test 1
 
-echo
-echo Running test 1
+# echo
+# echo Running test 1
 
-java Semant.Main < ~brylow/cosc4400/Projects/tests/BinaryTree.java > proj.out
-~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/BinaryTree.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
+# java Semant.Main < ~brylow/cosc4400/Projects/tests/BinaryTree.java > proj.out
+# ~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/BinaryTree.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
 
-diff -u proj.out ref.out
-rm proj.out ref.out
-echo
+# diff -u proj.out ref.out
+# rm proj.out ref.out
+# echo
 
-echo Done test 1
+# echo Done test 1
 
 
 

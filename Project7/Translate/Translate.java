@@ -71,6 +71,7 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.Program n)
     {
 	// TODO
+        System.out.println("ProcFrag(");
         for (Absyn.ClassDecl c : n.classes) {
             c.accept(this);
         }
