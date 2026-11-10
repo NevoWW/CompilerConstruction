@@ -21,7 +21,7 @@ import java.io.Reader;
 public class Main {
 	public static int errorCount = 0;
 
-	public static void checkerPhaseOne(Program program){
+	public static void checkerPhaseOne(Program program, boolean printOutput){
 		Program tempProgram = program;
 		Table symClassTable = new Table();
 
@@ -135,13 +135,14 @@ public class Main {
 		// 	c.accept(ptv);
 		// }
 		// writer.flush();
+		if(printOutput){
+			PrintWriter writer = new PrintWriter(System.out);
+			CombinedVisitor combined = new CombinedVisitor(writer, checker);
 
-		PrintWriter writer = new PrintWriter(System.out);
-		CombinedVisitor combined = new CombinedVisitor(writer, checker);
+			program.accept(combined);
 
-		program.accept(combined);
-
-		writer.flush();
+			writer.flush();
+		}
 	}
 
 
@@ -194,7 +195,7 @@ public class Main {
 	// Program PrintVisitor pv =	new Program PrintVisitor(writer);
 	// pv.visit(parse);
 	// writer.flush();
-	checkerPhaseOne(parse);
+	checkerPhaseOne(parse, true);
 	
 	}
     catch (ParseException p)

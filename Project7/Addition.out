@@ -1,0 +1,56 @@
+DataFrag(
+	.data
+Addition__vtable:
+	.word Addition__main
+
+)
+DataFrag(
+	.data
+A__vtable:
+	.word A__add
+
+)
+ProcFrag(
+RiscvFrame(
+main:
+Formals(InReg(t32)
+	InReg(t33)
+	)
+Actuals(InReg(t10)
+	InReg(t11)
+	)
+BadPtr(_BADPTR)
+BadSub(_BADSUB)
+)
+SEQ(
+ MOVE(
+  TEMP(t34)
+  BINOP(BITXOR
+   BINOP(BITXOR
+    CONST(1)
+    CONST(1))
+   CONST(1)))
+ MOVE(
+  TEMP(t10)
+  CONST(0)))
+)
+ProcFrag(
+RiscvFrame(
+A__add:
+Formals(InReg(t35)
+	InReg(t36)
+	InReg(t37)
+	)
+Actuals(InReg(t10)
+	InReg(t11)
+	InReg(t12)
+	)
+BadPtr(_BADPTR)
+BadSub(_BADSUB)
+)
+MOVE(
+ TEMP(t10)
+ BINOP(PLUS
+  TEMP(t36)
+  TEMP(t37)))
+)

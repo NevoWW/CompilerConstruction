@@ -2,12 +2,19 @@
  * All rights reserved.  */
 
 package Translate;
-import Parse.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.util.Iterator;
+
+//import Semant.*;
+import Absyn.Program;
+import Parse.*;
+import Types.CombinedVisitor;
+
+import java.util.HashMap; 
+import java.util.List;
+import java.util.LinkedList;
 
 //import Translate.Translate;
 
@@ -25,48 +32,63 @@ public class Main
     public static void main(String args[])
     {
 		InputStreamReader isr = new InputStreamReader(System.in);
-        Reader reader = new BufferedReader(isr);
+        java.io.Reader reader = new BufferedReader(isr);
 
+        Absyn.Program parse = null;
         try
         {
-            Absyn.Program parse = new MiniJavaParser(reader).Goal();
+            // TODO: If you are abandoning your previous compiler
+            // phases, this code will use the provided JavaCC grammar
+            // to read in output from the reference implementation
+            // parser and typechecker.
+            // If you are building on your prior projects, comment this
+            // out, and replace it with code the invokes your parser
+            // and typechecker (See Parse.Main and Semant.Main).
+            // parse = new Parse.ReadTypes(reader).Program();
 
-            Translate translate = new Translate(new Riscv.RiscvFrame());
-            parse.accept(translate);
-		
-		PrintWriter writer = new PrintWriter(System.out);
-			
-		for (Iterator frags = translate.results().iterator(); 
-			frags.hasNext(); ) 
-		{
-			Frag f = (Frag)frags.next();
-			if (f instanceof DataFrag) 
-			{
-				writer.println("DataFrag(");
-				writer.println(f);
-				writer.println(")");
-			} 
-			else 
-			{
-				writer.println("ProcFrag(");
-				ProcFrag p = (ProcFrag)f;
-				p.frame.printFrame(writer);
-				if (p.body != null) 
-				{
-					new Tree.Print(writer, p.body);
-					writer.println();
-				}
-				writer.println(")");
-			}
-		}  
-		writer.flush();
-	
+			parse = new MiniJavaParser(reader).Goal();
+        }
+        catch (ParseException p)
+        {
+            System.err.println(p.toString());
+            System.exit(-1);
+        }
+        Semant.Main.checkerPhaseOne(parse, false);
+
+		if (Semant.Main.errorCount > 0) {
+			System.err.println("Semantic errors.");
+			return;
 		}
-		catch (ParseException p)
-		{
-			System.out.println(p.toString());
-			System.exit(-1);
-		}
+
+        Translate translate = new Translate(new Riscv.RiscvFrame());
+        parse.accept(translate);
+
+        PrintWriter writer = new PrintWriter(System.out);
+
+        for (Iterator frags = translate.results().iterator(); 
+             frags.hasNext(); ) 
+        {
+            Frag f = (Frag)frags.next();
+            if (f instanceof DataFrag) 
+            {
+                writer.println("DataFrag(");
+                writer.println(f);
+                writer.println(")");
+            } 
+            else 
+            {
+                writer.println("ProcFrag(");
+                ProcFrag p = (ProcFrag)f;
+                p.frame.printFrame(writer);
+                if (p.body != null) 
+                {
+                    new Tree.Print(writer, p.body);
+                    writer.println();
+                }
+                writer.println(")");
+            }
+        }  
+        writer.flush();
 	}
 }	
 

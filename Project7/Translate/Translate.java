@@ -24,29 +24,29 @@ public class Translate implements Absyn.TreeVisitor
 	
     private static Tree.Exp CONST(int value)  { return new Tree.CONST(value); }
     private static Tree.Exp NAME(Label label) {	return new Tree.NAME(label); }
-    static Tree.Exp TEMP(Temp temp)   {	return new Tree.TEMP(temp); }
+    private static Tree.Exp TEMP(Temp temp)   {	return new Tree.TEMP(temp); }
     private static Tree.Exp BINOP(int binop, Tree.Exp left, Tree.Exp right) 
     {   return new Tree.BINOP(binop, left, right);   }
     private static Tree.Exp MEM(Tree.Exp exp) {	return new Tree.MEM(exp); }
     private static Tree.Exp CALL(Tree.Exp func, List args) 
     {	return new Tree.CALL(func, args);   }
-    static Tree.Exp ESEQ(Tree.Stm stm, Tree.Exp exp)
+    private static Tree.Exp ESEQ(Tree.Stm stm, Tree.Exp exp)
     {
 	if (stm == null) return exp;
 	return new Tree.ESEQ(stm, exp);
     }
 	
-    static Tree.Stm MOVE(Tree.Exp dst, Tree.Exp src) 
+    private static Tree.Stm MOVE(Tree.Exp dst, Tree.Exp src) 
     {
 	return new Tree.MOVE(dst, src);
     }
     private static Tree.Stm EXP(Tree.Exp exp) {	return new Tree.EXP(exp); }
-    static Tree.Stm JUMP(Label target) 
+    private static Tree.Stm JUMP(Label target) 
     {	return new Tree.JUMP(target);   }
     private static Tree.Stm CJUMP(int relop, Tree.Exp l, Tree.Exp r,
 				  Label t, Label f)
     {	return new Tree.CJUMP(relop, l, r, t, f);   }
-    static Tree.Stm SEQ(Tree.Stm left, Tree.Stm right) 
+    private static Tree.Stm SEQ(Tree.Stm left, Tree.Stm right) 
     {
 	if (left == null)
 	    return right;
@@ -54,7 +54,7 @@ public class Translate implements Absyn.TreeVisitor
 	    return left;
 	return new Tree.SEQ(left, right);
     }
-    static Tree.Stm LABEL(Label label) 
+    private static Tree.Stm LABEL(Label label) 
     {
 	return new Tree.LABEL(label);
     }
@@ -71,21 +71,26 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.Program n)
     {
 	// TODO
-        System.out.println("ProcFrag(");
         for (Absyn.ClassDecl c : n.classes) {
             c.accept(this);
         }
-	return null;
+	return new Nx(null);
     }
     
     public Exp visit(Absyn.ClassDecl c) 
     {
 	// TODO
         classEnv.put(c.name, c.checkType);
-
+        
+        Label vt = new Label(c.name + "__vtable");
+        vtableEnv.put(c.name, vt);
+        LinkedList<Label> entries = new LinkedList<Label>();
+        for (Absyn.MethodDecl m : c.methods)
+            entries.add(new Label(c.name + "__" + m.name));
+        frags.add(new DataFrag(frame.record(vt, entries)));
         for (Absyn.MethodDecl m : c.methods)
             m.accept(this);
-	return null;
+	return new Nx(null);
     }
 
     public Exp visit(Absyn.ThreadDecl c) 
@@ -93,7 +98,7 @@ public class Translate implements Absyn.TreeVisitor
 	// TODO
         for (Absyn.MethodDecl m : c.methods)
             m.accept(this);
-	return null;
+	return new Nx(null);
     }
 
     public Exp visit(Absyn.MethodDecl m) 
@@ -101,18 +106,36 @@ public class Translate implements Absyn.TreeVisitor
 	// TODO
         Label name = new Label(m.name);
         methodEnv.put(Symbol.symbol(m.name), name);
-        for (Absyn.VarDecl v : m.locals)
-        v.accept(this);
 
-    // Body
+        Frame.Frame saved = frame;
+        frame = saved.newFrame(Symbol.symbol(m.name));
+        varEnv.put(Symbol.symbol("this"), frame.allocFormal());
+        for (Absyn.Formal f : m.params) {
+        f.accept(this);
+        }
+
         Tree.Stm body = null;
-        for (Absyn.Stmt s : m.stmts)
-            body = SEQ(body, s.accept(this).unNx());
 
-        // Return value goes into the return-value register
-        Tree.Exp ret = m.returnVal.accept(this).unEx();
-        body = SEQ(body, MOVE(TEMP(frame.RV()), ret));
-	return null;
+        for (Absyn.VarDecl v : m.locals) {
+            v.accept(this);
+            if (v.init != null) {                             // GUESS: field name
+            Frame.Access a = (Frame.Access) varEnv.get(Symbol.symbol(v.name));
+            body = SEQ(body, MOVE(a.exp(frame), v.init.accept(this).unEx()));
+        }
+        }
+
+
+        for (Absyn.Stmt s : m.stmts) {
+            body = SEQ(body, s.accept(this).unNx());
+        }
+
+        if (m.returnVal != null) {
+            Tree.Exp ret = m.returnVal.accept(this).unEx();
+            body = SEQ(body, MOVE(TEMP(frame.RV()), ret));
+        }
+        frags.add(new ProcFrag(body, frame));
+        frame=saved;
+        return new Nx(null);
     }
 
     public Exp visit(Absyn.VoidDecl m) 
@@ -124,14 +147,17 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.Formal f) 
     {
 	// TODO
-	return null;
+        Frame.Access a = frame.allocFormal();
+        varEnv.put(Symbol.symbol(f.name), a);
+	return new Nx(null);
     }
 
     public Exp visit(Absyn.VarDecl v) 
     {
 	// TODO
-     
-	return null;
+        Frame.Access a = frame.allocLocal();
+        varEnv.put(Symbol.symbol(v.name), a);
+	return new Nx(null);
     }
 
     public Exp visit(Absyn.BooleanType  t)   { return new Nx(null); }
@@ -232,7 +258,8 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.NotExpr e)
     {
         Exp exp = e.Expr1.accept(this);
-        return new IfThenElseExp(exp, new Ex(CONST(0)), new Ex(CONST(1)));
+        // return new IfThenElseExp(exp, new Ex(CONST(0)), new Ex(CONST(1)));
+        return new Ex(BINOP(Tree.BINOP.BITXOR, exp.unEx(), CONST(1)));
     }
 
     public Exp visit(Absyn.NewArrayExpr e) 
@@ -292,7 +319,8 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.ThisExpr e) 
     {
     	// TODO
-	return null;
+	     Frame.Access a = (Frame.Access) varEnv.get(Symbol.symbol("this"));  // check e's field name
+        return new Ex(a.exp(frame));
     }
     
     public Exp visit(Absyn.TrueExpr e)
@@ -314,7 +342,8 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.IdentifierExpr e) 
     {
     	// TODO
-	return null;
+	     Frame.Access a = (Frame.Access) varEnv.get(Symbol.symbol(e.id));  // check e's field name
+        return new Ex(a.exp(frame));
     }
 
     public Exp visit(Absyn.ArrayExpr e)
