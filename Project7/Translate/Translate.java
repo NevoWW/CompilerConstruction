@@ -107,6 +107,7 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.ThreadDecl c) 
     {
 	// TODO
+        currentClass = c.name;
         for (Absyn.MethodDecl m : c.methods)
             m.accept(this);
 	return new Nx(null);
@@ -302,10 +303,30 @@ public class Translate implements Absyn.TreeVisitor
 	return new RelCx(op, e1.unEx(), e2.unEx());
     }
 
-    public Exp visit(Absyn.GreaterExpr e)  { return RelCx(Tree.CJUMP.GT, e); }
-    public Exp visit(Absyn.LesserExpr e)   { return RelCx(Tree.CJUMP.LT, e); }
-    public Exp visit(Absyn.EqualExpr e)    { return RelCx(Tree.CJUMP.EQ, e); }
-    public Exp visit(Absyn.NotEqExpr e)    { return RelCx(Tree.CJUMP.NE, e); }
+    public Exp visit(Absyn.GreaterExpr e)  { 
+        // return RelCx(Tree.CJUMP.GT, e); 
+        Exp e1 = e.Expr1.accept(this);
+        Exp e2 = e.Expr2.accept(this);
+        return new RelCx(Tree.CJUMP.GT, e1.unEx(), e2.unEx());
+    }
+    public Exp visit(Absyn.LesserExpr e)   { 
+        // return RelCx(Tree.CJUMP.LT, e); 
+        Exp e1 = e.Expr1.accept(this);
+        Exp e2 = e.Expr2.accept(this);
+        return new RelCx(Tree.CJUMP.LT, e1.unEx(), e2.unEx());
+    }
+    public Exp visit(Absyn.EqualExpr e)    { 
+        // return RelCx(Tree.CJUMP.EQ, e); 
+        Exp e1 = e.Expr1.accept(this);
+        Exp e2 = e.Expr2.accept(this);
+        return new RelCx(Tree.CJUMP.EQ, e1.unEx(), e2.unEx());
+    }
+    public Exp visit(Absyn.NotEqExpr e)    { 
+        // return RelCx(Tree.CJUMP.NE, e); 
+        Exp e1 = e.Expr1.accept(this);
+        Exp e2 = e.Expr2.accept(this);
+        return new RelCx(Tree.CJUMP.NE, e1.unEx(), e2.unEx());
+    }
 
     public Exp visit(Absyn.NotExpr e)
     {
@@ -317,25 +338,51 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.NewArrayExpr e) 
     {
 	// TODO
-	return null;
+	return new Nx(null);
     }
 
     public Exp visit(Absyn.XinuCallStmt s)
     {
 	// TODO
-	return null;
+        LinkedList<Tree.Exp> args = new LinkedList<Tree.Exp>();
+        for (Absyn.Expr a : s.args) {
+            args.add(a.accept(this).unEx());
+        }
+        return new Nx(EXP(CALL(NAME(new Label("_" + s.method)), args)));
     }
 
     public Exp visit(Absyn.XinuCallExpr e)
     {
 	// TODO
-	return null;
+	LinkedList<Tree.Exp> args = new LinkedList<Tree.Exp>();
+        for (Absyn.Expr a : e.args) {
+            args.add(a.accept(this).unEx());
+        }
+        return new Ex(CALL(NAME(new Label("_" + e.method)), args));
     }
 
     public Exp visit(Absyn.CallExpr e) 
     {
 	// TODO
-	return null;
+        Tree.Exp obj = e.target.accept(this).unEx();
+        Label ok = new Label();
+        Temp r = new Temp();
+    	LinkedList<Tree.Exp> args = new LinkedList<Tree.Exp>();
+        args.add(TEMP(r));
+	    for (Absyn.Expr a : e.args) {
+            args.add(a.accept(this).unEx());
+        }
+
+        int index = e.typeIndex;
+        int w = frame.wordSize();
+        Tree.Exp vtable = MEM(BINOP(Tree.BINOP.PLUS, TEMP(r), CONST(-w)));
+        Tree.Exp fn = MEM(BINOP(Tree.BINOP.PLUS, vtable, CONST(index * w)));
+        // return new Ex(CALL(fn, args));
+        return new Ex(ESEQ(
+        SEQ(MOVE(TEMP(r), obj),
+        SEQ(CJUMP(Tree.CJUMP.EQ, TEMP(r), CONST(0), frame.badPtr(), ok),
+            LABEL(ok))),
+        CALL(fn, args)));
     }
 
     public Exp visit(Absyn.FalseExpr e)
@@ -350,7 +397,15 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit (Absyn.NewObjectExpr e) 
     {
     	// TODO
-	return null;
+    String cname = ((Types.OBJECT) e.type2).myClass.name;
+    CLASS cl = classEnv.get(cname);
+    int numFields = 0;
+    for (Types.FIELD f : cl.instance.fields) numFields++;
+
+    LinkedList<Tree.Exp> args = new LinkedList<Tree.Exp>();
+    args.add(CONST(numFields));
+    args.add(NAME(vtableEnv.get(cname)));
+    return new Ex(CALL(NAME(new Label("_new")), args));
     }
     
     private HashMap<String, Label> strings = new HashMap<String, Label>();
@@ -401,6 +456,6 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.ArrayExpr e)
     {
     	// TODO
-	return null;
+	return new Nx(null);
     }
 }

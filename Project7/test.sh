@@ -20,21 +20,21 @@ make
 # SAVE OUTPUT IN FILE 
 # OUR PROJECT > proj.out
 # REFRENCE > ref.out
-rm NQUEENSref
-~brylow/cosc4400/Projects/mjparser testcases/Addtion.java | ~brylow/cosc4400/Projects/mjchecker - |  ~brylow/cosc4400/Projects/mjtranslator - > NQUEENSref.out
+# rm NQUEENSref
+# ~brylow/cosc4400/Projects/mjparser testcases/Addtion.java | ~brylow/cosc4400/Projects/mjchecker - |  ~brylow/cosc4400/Projects/mjtranslator - > NQUEENSref.out
 
 # java Semant.Main < testcases/NQueens.java > proj.out
 # ~brylow/cosc4400/Projects/mjparser testcases/NQueens.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
 
-# echo
-# echo Running test 1
+echo
+echo Running test 1
 
-# java Semant.Main < testcases/NQueens.java > proj.out
-# ~brylow/cosc4400/Projects/mjparser testcases/NQueens.java | ~brylow/cosc4400/Projects/mjchecker - > ref.out
+java Translate.Main < testcases/Factorial.java > proj.out
+~brylow/cosc4400/Projects/mjparser testcases/Factorial.java | ~brylow/cosc4400/Projects/mjchecker - |  ~brylow/cosc4400/Projects/mjtranslator - > ref.out
 
-# diff -u proj.out ref.out
-# rm proj.out ref.out
-# echo
+diff -u proj.out ref.out
+rm proj.out ref.out
+echo
 
 # echo Done test 1
 
