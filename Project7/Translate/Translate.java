@@ -10,10 +10,22 @@ import Temp.Temp;
 import Symbol.*;
 import Types.CLASS;
 
+import java.util.Iterator;
+
+
 /**
  * Implements translation of abstract syntax expressions
  * into intermediate trees.
  */
+
+/**
+ * COSC 4400 - Project #7
+ * Scanner accepts input from user
+ * @authors [Aleksandro Zhaka, Christian Guzman ]
+ * Instructor [Dennis Brylow]
+ * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, christian.guzmanrivas@marquette.edu]
+ */
+
 
 public class Translate implements Absyn.TreeVisitor 
 {
@@ -116,19 +128,19 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.MethodDecl m) 
     {
 	// TODO
+        Tree.Stm body = null;
         String full = currentClass + "__" + m.name;
-        Label name = methodEnv.get(Symbol.symbol(full));
+        // Label name = methodEnv.get(Symbol.symbol(full));
         // methodEnv.put(Symbol.symbol(m.name), name);
 
         Frame.Frame saved = frame;
         String frameName = m.name.equals("main") ? "main" : full;
         frame = saved.newFrame(Symbol.symbol(frameName));
+        varEnv.beginScope();
         varEnv.put(Symbol.symbol("this"), frame.allocFormal());
         for (Absyn.Formal f : m.params) {
-        f.accept(this);
+            body = SEQ(body, f.accept(this).unNx());
         }
-
-        Tree.Stm body = null;
 
 
         for (Absyn.VarDecl v : m.locals) {
@@ -144,6 +156,7 @@ public class Translate implements Absyn.TreeVisitor
             Tree.Exp ret = m.returnVal.accept(this).unEx();
             body = SEQ(body, MOVE(TEMP(frame.RV()), ret));
         }
+        varEnv.endScope();
         frags.add(new ProcFrag(body, frame));
         frame=saved;
         return new Nx(null);
@@ -338,7 +351,16 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.NewArrayExpr e) 
     {
 	// TODO
-	return new Nx(null);
+        Iterator<Absyn.Expr> it = e.dim.iterator();
+        Exp exp = (it.next()).accept(this);
+        while (it.hasNext()){
+            if(it.next() != null) throw new Error();
+        }
+        LinkedList<Tree.Exp> args = new LinkedList<Tree.Exp>();
+        Temp size = new Temp();
+        args.add(TEMP(size));
+        args.add(TEMP(size));
+	    return new Ex(ESEQ(MOVE(TEMP(size), exp.unEx()), frame.externalCall(Symbol.symbol("_new"), args)));
     }
 
     public Exp visit(Absyn.XinuCallStmt s)
