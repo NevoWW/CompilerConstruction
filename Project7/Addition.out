@@ -17,17 +17,17 @@ BadPtr(_BADPTR)
 BadSub(_BADSUB)
 )
 SEQ(
- SEQ(
-  MOVE(
-   TEMP(t34)
-   BINOP(BITXOR
-    BINOP(BITXOR
-     CONST(1)
-     CONST(1))
-    CONST(1)))
-  MOVE(
-   TEMP(t35)
-   CONST(0)))
+ MOVE(
+  TEMP(t34)
+  ESEQ(
+   MOVE(
+    TEMP(t35)
+    CONST(5))
+   CALL(
+    NAME(_new)
+    TEMP(t35)
+    TEMP(t35)
+   )))
  MOVE(
   TEMP(t10)
   CONST(0)))

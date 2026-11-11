@@ -472,12 +472,49 @@ public class Translate implements Absyn.TreeVisitor
     {
     	// TODO
 	     Frame.Access a = (Frame.Access) varEnv.get(Symbol.symbol(e.id));
+        if (a != null)
         return new Ex(a.exp(frame));
+
+    // Not a local or formal, so it's a field of "this"
+    Frame.Access self = (Frame.Access) varEnv.get(Symbol.symbol("this"));
+    int index = 0;
+    boolean found = false;
+    for (Types.FIELD f : classEnv.get(currentClass).instance.fields) {
+        if (f.name.toString().equals(e.id)) { found = true; break; }
+        index++;
+    }
+    if (!found)
+        throw new Error("unknown identifier: " + e.id);
+
+    return new Ex(MEM(BINOP(Tree.BINOP.PLUS, self.exp(frame),
+                            CONST(index * frame.wordSize()))));
     }
 
     public Exp visit(Absyn.ArrayExpr e)
     {
     	// TODO
-	return new Nx(null);
+	    Tree.Exp obj = e.target.accept(this).unEx();
+        Tree.Exp index = e.index.accept(this).unEx();
+        int w = frame.wordSize();
+
+        Label L1 = new Label(); Label L2 = new Label(); Label L3 = new Label();
+        Temp a = new Temp(); Temp b = new Temp();
+    	LinkedList<Tree.Exp> args = new LinkedList<Tree.Exp>();
+        args.add(TEMP(a));
+
+        Tree.Exp vtable = MEM(BINOP(Tree.BINOP.PLUS, TEMP(a), CONST(-w)));
+        Tree.Exp fn = MEM(BINOP(Tree.BINOP.PLUS, vtable, BINOP(Tree.BINOP.MUL, index, CONST(w))));
+        // return new Ex(CALL(fn, args));
+        return new Ex(ESEQ(
+        SEQ(MOVE(TEMP(a), obj),
+            SEQ(MOVE(TEMP(b), index), 
+                SEQ(CJUMP(Tree.CJUMP.EQ, TEMP(b), CONST(0), frame.badPtr(), L1),
+                    SEQ(LABEL(L1),
+                        SEQ(CJUMP(Tree.CJUMP.LT, TEMP(b), CONST(0), frame.badSub(), L2),
+                            SEQ(LABEL(L2),
+                                CJUMP(Tree.CJUMP.GE, TEMP(b), vtable, frame.badSub(), L3)
+                                    )))))),
+        ESEQ(LABEL(L3),
+            MEM(BINOP(Tree.BINOP.PLUS, TEMP(a), BINOP(Tree.BINOP.MUL, TEMP(b), CONST(w)))))));
     }
 }

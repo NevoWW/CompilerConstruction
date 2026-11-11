@@ -1,20 +1,12 @@
 class Addition {
     public static void main (String[] a) {
-    boolean x = !(!true);
-    int y = 1 + 2;
-    int b = 3 - 4;
+    Xinu.printint(new Arr().run());
     }
- 
-    
-
 }
 
-class Subtraction {
-   public int subtract(int a, int b) {
-        return a - b;
+class Arr {
+    public int run() {
+        int [] x = new int[3];
+        return x[1];
     }
- 
-    
-
 }
-
