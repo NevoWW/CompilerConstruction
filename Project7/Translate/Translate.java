@@ -223,8 +223,16 @@ public class Translate implements Absyn.TreeVisitor
 	// TODO
         Exp cond = s.test.accept(this);
         Exp t = s.thenStm.accept(this);
-        Exp f = (s.elseStm == null) ? new Nx(null) : s.elseStm.accept(this);
+        
+        if(s.elseStm == null) {
+            Label done = new Label();
+            Label then = new Label();
+            return new Nx(SEQ(SEQ(cond.unCx(then, done), SEQ(SEQ(LABEL(then), t.unNx()), JUMP(done))),LABEL(done)));
+        }
+
+        Exp f = s.elseStm.accept(this);
         return new IfThenElseExp(cond, t, f);
+
     }
 
     public Exp visit(Absyn.WhileStmt s)
