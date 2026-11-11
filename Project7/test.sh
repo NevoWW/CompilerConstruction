@@ -29,10 +29,10 @@ make
 echo
 echo Running test 1
 
-java Translate.Main < testcases/Factorial.java > proj.out
-~brylow/cosc4400/Projects/mjparser testcases/Factorial.java | ~brylow/cosc4400/Projects/mjchecker - |  ~brylow/cosc4400/Projects/mjtranslator - > ref.out
+java Translate.Main < testcases/BinarySearch.java > proj.out
+~brylow/cosc4400/Projects/mjparser testcases/BinarySearch.java | ~brylow/cosc4400/Projects/mjchecker - |  ~brylow/cosc4400/Projects/mjtranslator - > ref.out
 
-diff -u proj.out ref.out
+diff proj.out ref.out
 rm proj.out ref.out
 echo
 

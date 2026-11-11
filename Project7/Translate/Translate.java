@@ -235,12 +235,15 @@ public class Translate implements Absyn.TreeVisitor
         Label test = new Label();
         Label done = new Label();
         Label body = new Label();
-        return new Nx(
-                SEQ(LABEL(test),
-                SEQ(cond.unCx(body, done),
-                SEQ(LABEL(body),
-                SEQ(t,
-                SEQ(JUMP(test), LABEL(done)))))));
+
+        return new Nx(SEQ(SEQ(SEQ(LABEL(test),
+                                    cond.unCx(body, done)),
+                                SEQ(SEQ(LABEL(body),
+                                        t
+                                        ),
+                                    JUMP(test))),
+                        LABEL(done)));
+                                    
     }
 
     private Exp Ex(int op, Absyn.BinOpExpr e) 
@@ -295,8 +298,8 @@ public class Translate implements Absyn.TreeVisitor
 
     public Exp visit(Absyn.AndExpr e) 
     {
-        Exp e1 = e.e1.accept(this);
-        Exp e2 = e.e2.accept(this);
+        Exp e1 = e.Expr1.accept(this);
+        Exp e2 = e.Expr2.accept(this);
         // Short-circuit Boolean AND, with false == 0.
         return new IfThenElseExp(e1, e2, new Ex(CONST(0)));
     }
@@ -304,8 +307,8 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.OrExpr e)
     {
 	// TODO
-	    Exp e1 = e.e1.accept(this);
-        Exp e2 = e.e2.accept(this);
+	    Exp e1 = e.Expr1.accept(this);
+        Exp e2 = e.Expr2.accept(this);
         return new IfThenElseExp(e1, new Ex(CONST(1)), e2);
     }
 
@@ -483,11 +486,14 @@ public class Translate implements Absyn.TreeVisitor
         if (f.name.toString().equals(e.id)) { found = true; break; }
         index++;
     }
-    if (!found)
-        throw new Error("unknown identifier: " + e.id);
-
-    return new Ex(MEM(BINOP(Tree.BINOP.PLUS, self.exp(frame),
-                            CONST(index * frame.wordSize()))));
+    Temp r = new Temp();
+    Label ok = new Label();
+    return new Ex(ESEQ(
+        SEQ(MOVE(TEMP(r), self.exp(frame)),
+            CJUMP(Tree.CJUMP.EQ, TEMP(r), CONST(0), frame.badPtr(), ok)),
+        ESEQ(LABEL(ok),
+             MEM(BINOP(Tree.BINOP.PLUS, TEMP(r),
+                       CONST(index * frame.wordSize()))))));
     }
 
     public Exp visit(Absyn.ArrayExpr e)
