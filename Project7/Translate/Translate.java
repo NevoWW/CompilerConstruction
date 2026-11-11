@@ -360,7 +360,7 @@ public class Translate implements Absyn.TreeVisitor
         Temp size = new Temp();
         args.add(TEMP(size));
         args.add(TEMP(size));
-	    return new Ex(ESEQ(MOVE(TEMP(size), exp.unEx()), frame.externalCall(Symbol.symbol("_new"), args)));
+	    return new Ex(ESEQ(MOVE(TEMP(size), exp.unEx()), CALL(NAME(new Label("_new")), args)));
     }
 
     public Exp visit(Absyn.XinuCallStmt s)
@@ -471,7 +471,7 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.IdentifierExpr e) 
     {
     	// TODO
-	     Frame.Access a = (Frame.Access) varEnv.get(Symbol.symbol(e.id));  // check e's field name
+	     Frame.Access a = (Frame.Access) varEnv.get(Symbol.symbol(e.id));
         return new Ex(a.exp(frame));
     }
 
