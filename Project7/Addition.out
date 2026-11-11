@@ -4,12 +4,6 @@ Addition__vtable:
 	.word Addition__main
 
 )
-DataFrag(
-	.data
-A__vtable:
-	.word A__add
-
-)
 ProcFrag(
 RiscvFrame(
 main:
@@ -23,34 +17,18 @@ BadPtr(_BADPTR)
 BadSub(_BADSUB)
 )
 SEQ(
- MOVE(
-  TEMP(t34)
-  BINOP(BITXOR
+ SEQ(
+  MOVE(
+   TEMP(t34)
    BINOP(BITXOR
-    CONST(1)
-    CONST(1))
-   CONST(1)))
+    BINOP(BITXOR
+     CONST(1)
+     CONST(1))
+    CONST(1)))
+  MOVE(
+   TEMP(t35)
+   CONST(0)))
  MOVE(
   TEMP(t10)
   CONST(0)))
-)
-ProcFrag(
-RiscvFrame(
-A__add:
-Formals(InReg(t35)
-	InReg(t36)
-	InReg(t37)
-	)
-Actuals(InReg(t10)
-	InReg(t11)
-	InReg(t12)
-	)
-BadPtr(_BADPTR)
-BadSub(_BADSUB)
-)
-MOVE(
- TEMP(t10)
- BINOP(PLUS
-  TEMP(t36)
-  TEMP(t37)))
 )

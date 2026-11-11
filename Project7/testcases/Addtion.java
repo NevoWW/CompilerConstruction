@@ -1,16 +1,20 @@
 class Addition {
     public static void main (String[] a) {
     boolean x = !(!true);
-
+    int y = 1 + 2;
+    int b = 3 - 4;
     }
+ 
+    
+
 }
 
-    class A {
-        public int add(int a, int b) {
-            return a + b;
-        }
+class Subtraction {
+   public int subtract(int a, int b) {
+        return a - b;
     }
+ 
+    
 
-
-
+}
 

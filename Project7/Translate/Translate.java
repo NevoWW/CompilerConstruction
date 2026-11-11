@@ -72,22 +72,33 @@ public class Translate implements Absyn.TreeVisitor
     {
 	// TODO
         for (Absyn.ClassDecl c : n.classes) {
+        classEnv.put(c.name, c.checkType);
+
+        Label vt = new Label(c.name + "__vtable");
+        vtableEnv.put(c.name, vt);
+
+        LinkedList<Label> entries = new LinkedList<Label>();
+        for (Absyn.MethodDecl m : c.methods) {
+            Label methodLabel = new Label(c.name + "__" + m.name);
+            entries.add(methodLabel);
+            methodEnv.put(Symbol.symbol(c.name + "__" + m.name), methodLabel);
+        }
+        frags.add(new DataFrag(frame.record(vt, entries)));
+    }
+
+
+        for (Absyn.ClassDecl c : n.classes) {
             c.accept(this);
         }
 	return new Nx(null);
     }
     
+    private String currentClass;
     public Exp visit(Absyn.ClassDecl c) 
     {
 	// TODO
-        classEnv.put(c.name, c.checkType);
-        
-        Label vt = new Label(c.name + "__vtable");
-        vtableEnv.put(c.name, vt);
-        LinkedList<Label> entries = new LinkedList<Label>();
-        for (Absyn.MethodDecl m : c.methods)
-            entries.add(new Label(c.name + "__" + m.name));
-        frags.add(new DataFrag(frame.record(vt, entries)));
+        currentClass = c.name;
+
         for (Absyn.MethodDecl m : c.methods)
             m.accept(this);
 	return new Nx(null);
@@ -104,11 +115,13 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.MethodDecl m) 
     {
 	// TODO
-        Label name = new Label(m.name);
-        methodEnv.put(Symbol.symbol(m.name), name);
+        String full = currentClass + "__" + m.name;
+        Label name = methodEnv.get(Symbol.symbol(full));
+        // methodEnv.put(Symbol.symbol(m.name), name);
 
         Frame.Frame saved = frame;
-        frame = saved.newFrame(Symbol.symbol(m.name));
+        String frameName = m.name.equals("main") ? "main" : full;
+        frame = saved.newFrame(Symbol.symbol(frameName));
         varEnv.put(Symbol.symbol("this"), frame.allocFormal());
         for (Absyn.Formal f : m.params) {
         f.accept(this);
@@ -116,12 +129,9 @@ public class Translate implements Absyn.TreeVisitor
 
         Tree.Stm body = null;
 
+
         for (Absyn.VarDecl v : m.locals) {
-            v.accept(this);
-            if (v.init != null) {                             // GUESS: field name
-            Frame.Access a = (Frame.Access) varEnv.get(Symbol.symbol(v.name));
-            body = SEQ(body, MOVE(a.exp(frame), v.init.accept(this).unEx()));
-        }
+            body = SEQ(body, v.accept(this).unNx());
         }
 
 
@@ -141,7 +151,7 @@ public class Translate implements Absyn.TreeVisitor
     public Exp visit(Absyn.VoidDecl m) 
     {
 	// TODO
-	return null;
+	return new Nx(null);
     }
 
     public Exp visit(Absyn.Formal f) 
@@ -157,8 +167,18 @@ public class Translate implements Absyn.TreeVisitor
 	// TODO
         Frame.Access a = frame.allocLocal();
         varEnv.put(Symbol.symbol(v.name), a);
-	return new Nx(null);
+	// return new Nx(null);
+        if (v.init != null) {
+        return new Nx(
+            MOVE(a.exp(frame), v.init.accept(this).unEx())
+        );
+    } else {
+        return new Nx(
+            MOVE(a.exp(frame), CONST(0))
+        );
     }
+    }
+    
 
     public Exp visit(Absyn.BooleanType  t)   { return new Nx(null); }
     public Exp visit(Absyn.IntegerType  t)   { return new Nx(null); }
@@ -216,10 +236,42 @@ public class Translate implements Absyn.TreeVisitor
 		return new Ex(BINOP(op, e1.unEx(), e2.unEx()));
     }
 
-    public Exp visit(Absyn.AddExpr e) { return Ex(Tree.BINOP.PLUS, e); }
-    public Exp visit(Absyn.DivExpr e) { return Ex(Tree.BINOP.DIV, e); }
-    public Exp visit(Absyn.MulExpr e) { return Ex(Tree.BINOP.MUL, e); }
-    public Exp visit(Absyn.SubExpr e) { return Ex(Tree.BINOP.MINUS, e); }
+    public Exp visit(Absyn.AddExpr e) {
+    //  return Ex(Tree.BINOP.PLUS, e); 
+        Exp left = e.Expr1.accept(this);
+        Exp right = e.Expr2.accept(this);
+
+        return new Ex(
+            BINOP(Tree.BINOP.PLUS, left.unEx(), right.unEx())
+        );
+    }
+    public Exp visit(Absyn.DivExpr e) {
+        //  return Ex(Tree.BINOP.DIV, e);
+        Exp left = e.Expr1.accept(this);
+        Exp right = e.Expr2.accept(this);
+
+        return new Ex(
+            BINOP(Tree.BINOP.DIV, left.unEx(), right.unEx())
+        );        
+    }
+    public Exp visit(Absyn.MulExpr e) {
+        //  return Ex(Tree.BINOP.MUL, e);
+        Exp left = e.Expr1.accept(this);
+        Exp right = e.Expr2.accept(this);
+
+        return new Ex(
+            BINOP(Tree.BINOP.MUL, left.unEx(), right.unEx())
+        );        
+    }
+    public Exp visit(Absyn.SubExpr e) { 
+        //  return Ex(Tree.BINOP.MINUS, e);
+        Exp left = e.Expr1.accept(this);
+        Exp right = e.Expr2.accept(this);
+
+        return new Ex(
+            BINOP(Tree.BINOP.MINUS, left.unEx(), right.unEx())
+        );        
+    }
 
     public Exp visit(Absyn.NegExpr e)
     {
