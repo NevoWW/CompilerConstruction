@@ -181,7 +181,6 @@ public class Translate implements Absyn.TreeVisitor
 	// TODO
         Frame.Access a = frame.allocLocal();
         varEnv.put(Symbol.symbol(v.name), a);
-	// return new Nx(null);
         if (v.init != null) {
         return new Nx(
             MOVE(a.exp(frame), v.init.accept(this).unEx())
