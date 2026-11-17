@@ -60,15 +60,30 @@ public class IfThenElseExp extends Exp {
 
     Tree.Stm unCx(Label tt, Label ff) {
 	// TODO: Check for optimizations
-		Label t = new Label();
-		Label f = new Label();
-        Tree.Stm condStm = cond.unCx(t, f);
-		Tree.Stm tStm = trueExp.unCx(tt, ff);
-		Tree.Stm fStm = falseExp.unCx(tt, ff);
+		if (isConst(trueExp, 1)) {
+        Label f = new Label();
+        return SEQ(cond.unCx(tt, f),
+                   SEQ(LABEL(f), falseExp.unCx(tt, ff)));
+        }
+        // a && b  ==  a ? b : 0
+        if (isConst(falseExp, 0)) {
+            Label t = new Label();
+            return SEQ(cond.unCx(t, ff),
+                    SEQ(LABEL(t), trueExp.unCx(tt, ff)));
+        }
 
-	return SEQ(condStm,
-		   SEQ(SEQ(LABEL(t), tStm),
-		       SEQ(LABEL(f), fStm)));
+        Label t = new Label();
+        Label f = new Label();
+        Tree.Stm condStm = cond.unCx(t, f);
+        Tree.Stm tStm = trueExp.unCx(tt, ff);
+        Tree.Stm fStm = falseExp.unCx(tt, ff);
+        return SEQ(condStm, SEQ(SEQ(LABEL(t), tStm), SEQ(LABEL(f), fStm)));
+    }
+
+    private static boolean isConst(Exp e, int v) {
+        if (!(e instanceof Ex)) return false;
+        Tree.Exp x = ((Ex) e).unEx();  
+        return x instanceof Tree.CONST && ((Tree.CONST) x).value == v;
     }
 
     Tree.Exp unEx() {

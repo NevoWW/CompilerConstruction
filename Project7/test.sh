@@ -29,8 +29,8 @@ make
 echo
 echo Running test 1
 
-java Translate.Main < testcases/TreeVisitor.java > proj.out
-~brylow/cosc4400/Projects/mjparser testcases/TreeVisitor.java | ~brylow/cosc4400/Projects/mjchecker - |  ~brylow/cosc4400/Projects/mjtranslator - > ref.out
+java Translate.Main < ~brylow/cosc4400/Projects/tests/LinkedList.java  > proj.out
+~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/LinkedList.java  | ~brylow/cosc4400/Projects/mjchecker - |  ~brylow/cosc4400/Projects/mjtranslator - > ref.out
 
 diff proj.out ref.out
 rm proj.out ref.out

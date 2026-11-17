@@ -239,10 +239,9 @@ public class Translate implements Absyn.TreeVisitor
 	// TODO
         Exp cond = s.test.accept(this);
         Tree.Stm t = s.body.accept(this).unNx();
-        Label test = new Label();
         Label done = new Label();
+        Label test = new Label();
         Label body = new Label();
-
         return new Nx(SEQ(SEQ(SEQ(LABEL(test),
                                     cond.unCx(body, done)),
                                 SEQ(SEQ(LABEL(body),
@@ -353,9 +352,21 @@ public class Translate implements Absyn.TreeVisitor
 
     public Exp visit(Absyn.NotExpr e)
     {
-        Exp exp = e.Expr1.accept(this);
+        Exp inner = e.Expr1.accept(this);
         // return new IfThenElseExp(exp, new Ex(CONST(0)), new Ex(CONST(1)));
-        return new Ex(BINOP(Tree.BINOP.BITXOR, exp.unEx(), CONST(1)));
+        // return new Ex(BINOP(Tree.BINOP.BITXOR, exp.unEx(), CONST(1)));
+
+    return new Exp() {
+        Tree.Exp unEx() {
+            return BINOP(Tree.BINOP.BITXOR, inner.unEx(), CONST(1));
+        }
+        Tree.Stm unNx() {
+            return inner.unNx();
+        }
+        Tree.Stm unCx(Label t, Label f) {
+            return inner.unCx(f, t);
+        }
+    };
     }
 
     public Exp visit(Absyn.NewArrayExpr e) 
@@ -397,19 +408,21 @@ public class Translate implements Absyn.TreeVisitor
     {
 	// TODO
         Tree.Exp obj = e.target.accept(this).unEx();
+
+        LinkedList<Tree.Exp> rest = new LinkedList<Tree.Exp>();
+        for (Absyn.Expr a : e.args)
+            rest.add(a.accept(this).unEx());      // args allocate first
+
         Label ok = new Label();
         Temp r = new Temp();
-    	LinkedList<Tree.Exp> args = new LinkedList<Tree.Exp>();
+        LinkedList<Tree.Exp> args = new LinkedList<Tree.Exp>();
         args.add(TEMP(r));
-	    for (Absyn.Expr a : e.args) {
-            args.add(a.accept(this).unEx());
-        }
+        args.addAll(rest);
 
         int index = e.typeIndex;
         int w = frame.wordSize();
         Tree.Exp vtable = MEM(BINOP(Tree.BINOP.PLUS, TEMP(r), CONST(-w)));
         Tree.Exp fn = MEM(BINOP(Tree.BINOP.PLUS, vtable, CONST(index * w)));
-        // return new Ex(CALL(fn, args));
         return new Ex(ESEQ(
         SEQ(MOVE(TEMP(r), obj),
         SEQ(CJUMP(Tree.CJUMP.EQ, TEMP(r), CONST(0), frame.badPtr(), ok),
@@ -521,7 +534,7 @@ public class Translate implements Absyn.TreeVisitor
         return new Ex(ESEQ(
         SEQ(MOVE(TEMP(a), obj),
             SEQ(MOVE(TEMP(b), index), 
-                SEQ(CJUMP(Tree.CJUMP.EQ, TEMP(b), CONST(0), frame.badPtr(), L1),
+                SEQ(CJUMP(Tree.CJUMP.EQ, TEMP(a), CONST(0), frame.badPtr(), L1),
                     SEQ(LABEL(L1),
                         SEQ(CJUMP(Tree.CJUMP.LT, TEMP(b), CONST(0), frame.badSub(), L2),
                             SEQ(LABEL(L2),

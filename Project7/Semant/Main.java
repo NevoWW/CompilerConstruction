@@ -43,6 +43,7 @@ public class Main {
 		}
 		if(errorCount > 0) return;
 		makeXinuType(symClassTable);
+		makeThreadType(symClassTable);
 
 		for(ClassDecl tempClass : program.classes){
 			Symbol key1 = Symbol.symbol(tempClass.name);
@@ -74,6 +75,7 @@ public class Main {
 				}
 
 				RECORD formals = new RECORD();
+
 
 				for(Formal params : method.params){
 					Types.Type fType = params.type.accept(new TypesPrint(symClassTable));
@@ -264,6 +266,13 @@ public class Main {
             { xinuClass.instance.methods.put(m.type, m.name); }
     }
 
+
+	private static void makeThreadType(Table symClassTable)
+	{
+		CLASS threadClass = new CLASS("Thread");
+		threadClass.instance.myClass = threadClass;   // same setup the user classes get
+		symClassTable.put(Symbol.symbol("Thread"), threadClass);
+	}
 	
 }
 
