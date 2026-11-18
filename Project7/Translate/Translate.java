@@ -224,8 +224,8 @@ public class Translate implements Absyn.TreeVisitor
         Exp t = s.thenStm.accept(this);
         
         if(s.elseStm == null) {
-            Label done = new Label();
             Label then = new Label();
+            Label done = new Label();
             return new Nx(SEQ(SEQ(cond.unCx(then, done), SEQ(SEQ(LABEL(then), t.unNx()), JUMP(done))),LABEL(done)));
         }
 
