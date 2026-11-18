@@ -16,5 +16,8 @@ public class CALL extends Exp
     public Exp func;
     public List<Exp> args;
     public CALL(Exp f, List<Exp> a) { func=f; args=a; }
+
+    
     public void accept(IntVisitor v, int d) { v.visit(this, d); }
+    public Temp accept(CodeVisitor v) { return v.visit(this); }
 }

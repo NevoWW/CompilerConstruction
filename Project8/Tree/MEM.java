@@ -14,4 +14,5 @@ public class MEM extends Exp
     public Exp exp;
     public MEM(Exp e) { exp=e; }
     public void accept(IntVisitor v, int d) { v.visit(this, d); }
+    public Temp accept(CodeVisitor v) { return v.visit(this); }
 }

@@ -11,9 +11,11 @@ import Temp.Temp;
 public abstract class Exp implements Hospitable
 {
 
-    public java.util.LinkedList<Exp> kids() { throw new Error("kids() not implemented"); }
-    public Exp build(java.util.LinkedList<Exp> kids) { throw new Error("build() not implemented"); }
+    public abstract java.util.LinkedList<Exp> kids();
+    public abstract Exp build(java.util.LinkedList<Exp> kids);
 
     public abstract void accept(IntVisitor v, int d);
+
+    public abstract Temp accept(CodeVisitor v);
 
 }
