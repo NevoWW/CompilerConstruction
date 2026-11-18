@@ -16,6 +16,16 @@ public class TEMP extends Exp
 		temp=t; 
 		//System.out.println("\n Call to TEMP : "+t.toString());
 	}
+
+	public java.util.LinkedList<Exp> kids() {
+        java.util.LinkedList<Exp> kids = new java.util.LinkedList<Exp>();
+        return kids;
+    }
+
+    public Exp build(java.util.LinkedList<Exp> kids) {
+        return this;
+    }
+	
     public void accept(IntVisitor v, int d) { v.visit(this, d); }
 	public Temp accept(CodeVisitor v) { return v.visit(this); }
 }

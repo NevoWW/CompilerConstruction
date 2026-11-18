@@ -16,13 +16,11 @@ public class CONST extends Exp
 
     public java.util.LinkedList<Exp> kids() {
         java.util.LinkedList<Exp> kids = new java.util.LinkedList<Exp>();
-        kids.add(new CONST(value));
         return kids;
     }
 
     public Exp build(java.util.LinkedList<Exp> kids) {
-        if (kids.isEmpty()) return this;
-        return new CONST(((CONST)kids.removeFirst()).value);
+        return this;
     }
 
     public void accept(IntVisitor v, int d) { v.visit(this, d); }

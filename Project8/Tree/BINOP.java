@@ -24,8 +24,8 @@ public class BINOP extends Exp {
 
     public Exp build(java.util.LinkedList<Exp> kids) {
         if (kids.isEmpty()) return this;
-        Exp l = kids.removeFirst();
-        Exp r = kids.removeFirst();
+        Exp l = kids.get(0);
+        Exp r = kids.get(1);
         return new BINOP(binop, l, r);
     }
 

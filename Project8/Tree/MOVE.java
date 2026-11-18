@@ -23,9 +23,8 @@ public class MOVE extends Stm
     }
 
     public Stm build(java.util.LinkedList<Exp> kids) {
-        if (kids.isEmpty()) return this;
-        if (dst instanceof MEM) return new MOVE(new MEM(kids.removeFirst()), kids.removeFirst());
-        else return new MOVE(kids.removeFirst(), kids.removeFirst());
+        if (dst instanceof MEM) return new MOVE(new MEM(kids.get(0)), kids.get(1));
+        return new MOVE(kids.get(0), kids.get(1));
     
     }
     public void accept(IntVisitor v, int d) { v.visit(this, d); }

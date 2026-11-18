@@ -13,6 +13,15 @@ public class SEQ extends Stm
 {
     public Stm left, right;
     public SEQ(Stm l, Stm r) { left=l; right=r; }
+
+     public java.util.LinkedList<Exp> kids() {
+        throw new Error("kids() not applicable to SEQ");
+    }
+
+    public Stm build(java.util.LinkedList<Exp> kids) {
+        throw new Error("Build() not applicable to SEQ");
+    }
+    
     public void accept(IntVisitor v, int d) { v.visit(this, d); }
     public void accept(CodeVisitor v) { v.visit(this); }
 }

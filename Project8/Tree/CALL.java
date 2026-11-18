@@ -17,6 +17,18 @@ public class CALL extends Exp
     public List<Exp> args;
     public CALL(Exp f, List<Exp> a) { func=f; args=a; }
 
+    public java.util.LinkedList<Exp> kids() {
+        java.util.LinkedList<Exp> kids = new java.util.LinkedList<Exp>();
+        kids.add(func);
+        for (Exp arg : args) {
+            kids.add(arg);
+        }
+        return kids;
+    }
+
+    public Exp build(java.util.LinkedList<Exp> kids) {
+        return new CALL(kids.get(0), new LinkedList<Exp>(kids.subList(1, kids.size())));
+    }
     
     public void accept(IntVisitor v, int d) { v.visit(this, d); }
     public Temp accept(CodeVisitor v) { return v.visit(this); }

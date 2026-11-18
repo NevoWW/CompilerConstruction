@@ -17,6 +17,16 @@ public class NAME extends Exp
 		//System.out.println("\n NAME is called : l :"+l);
 		this.label = label; 
 	}
+
+	public java.util.LinkedList<Exp> kids() {
+        java.util.LinkedList<Exp> kids = new java.util.LinkedList<Exp>();
+        return kids;
+    }
+
+    public Exp build(java.util.LinkedList<Exp> kids) {
+        return this;
+    }
+	
     public void accept(IntVisitor v, int d) { v.visit(this, d); }
 	public Temp accept(CodeVisitor v) { return v.visit(this); }
 }

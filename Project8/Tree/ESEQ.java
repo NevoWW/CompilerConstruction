@@ -16,6 +16,14 @@ public class ESEQ extends Exp
     public Exp exp;
     public ESEQ(Stm s, Exp e) { stm=s; exp=e; }
 
+    public java.util.LinkedList<Exp> kids() {
+        throw new Error("kids() not applicable to SEQ");
+    }
+
+    public Exp build(java.util.LinkedList<Exp> kids) {
+        throw new Error("Build() not applicable to SEQ");
+    }
+
     public void accept(IntVisitor v, int d) { v.visit(this, d); }
     public Temp accept(CodeVisitor v) { return v.visit(this); }
 }

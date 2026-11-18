@@ -22,6 +22,16 @@ public class JUMP extends Stm
 		targets.addFirst(target);
     }
 
+    public java.util.LinkedList<Exp> kids() {
+        java.util.LinkedList<Exp> kids = new java.util.LinkedList<Exp>();
+        kids.add(exp);
+        return kids;
+    }
+
+    public Stm build(java.util.LinkedList<Exp> kids) {
+        return new JUMP(kids.get(0), targets);
+    }
+
     public void accept(IntVisitor v, int d) { v.visit(this, d); }
     public void accept(CodeVisitor v) { v.visit(this); }
 }

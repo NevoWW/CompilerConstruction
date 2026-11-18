@@ -13,6 +13,18 @@ public class MEM extends Exp
 {
     public Exp exp;
     public MEM(Exp e) { exp=e; }
+
+    public java.util.LinkedList<Exp> kids() {
+        java.util.LinkedList<Exp> kids = new java.util.LinkedList<Exp>();
+        kids.add(exp);
+        return kids;
+    }
+
+    public Exp build(java.util.LinkedList<Exp> kids) {
+        return new MEM(kids.get(0));
+    }
+
+
     public void accept(IntVisitor v, int d) { v.visit(this, d); }
     public Temp accept(CodeVisitor v) { return v.visit(this); }
 }
