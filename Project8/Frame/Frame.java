@@ -33,6 +33,8 @@ public abstract class Frame
   public abstract String tempMap(Temp.Temp temp);
   public abstract void printFrame(java.io.PrintWriter pw);
 
+  public abstract List<Assem.Instr> codeGen(List<Tree.Stm> stms);
+
   public abstract void procEntryExit1(List<Tree.Stm> body);
   // public abstract void procEntryExit2(List<Assem.Instr> body);
   // public abstract void procEntryExit3(List<Assem.Instr> body);

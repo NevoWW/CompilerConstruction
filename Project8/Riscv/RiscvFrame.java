@@ -345,6 +345,15 @@ public class RiscvFrame extends Frame.Frame
 	writer.println(")");
     }
 
+    public List<Assem.Instr> codeGen(List<Tree.Stm> stms) {
+    List<Assem.Instr> insts = new LinkedList<>();
+    Codegen cg = new Codegen(this);
+    for (Tree.Stm s : stms) {
+        insts.addAll(cg.codegen(s));
+    }
+    return insts;
+}
+
     public void procEntryExit1(List<Tree.Stm> body)
     {
     }

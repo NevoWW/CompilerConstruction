@@ -12,6 +12,7 @@ make
 # REFRENCES IMPLEMENTATION
 # ~brylow/cosc4400/Projects/mjparser
 # ~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/tests/  FillInTestCase | ~brylow/cosc4400/Projects/mjchecker - 
+# ~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/NQueens.java  | ~brylow/cosc4400/Projects/mjchecker - |  ~brylow/cosc4400/Projects/mjtranslator - > ref.out
 
 # OUR IMPLEMENTATION
 # java Semant.Main < program.java
@@ -29,9 +30,8 @@ make
 echo
 echo Running test 1
 
-java Translate.Main < ~brylow/cosc4400/Projects/NQueens.java  > proj.out
-~brylow/cosc4400/Projects/mjparser ~brylow/cosc4400/Projects/NQueens.java  | ~brylow/cosc4400/Projects/mjchecker - |  ~brylow/cosc4400/Projects/mjtranslator - > ref.out
-
+java Assem.Main < testcases/Addtion.java  > proj.out
+~brylow/cosc4400/Projects/mjparser testcases/Addtion.java  | ~brylow/cosc4400/Projects/mjchecker - |  ~brylow/cosc4400/Projects/mjtranslator - | ~brylow/cosc4400/Projects/mjassem - > ref.out
 diff proj.out ref.out
 rm proj.out ref.out
 echo

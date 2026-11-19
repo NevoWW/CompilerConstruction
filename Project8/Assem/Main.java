@@ -2,14 +2,17 @@
  * All rights reserved.  */
 
 package Assem;
-import java.io.PrintWriter;
 import java.util.Iterator;
 
-import Parse.*;
-
 import java.util.HashMap; 
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.LinkedList;
+
+import Parse.*;
 
 public class Main 
 {
@@ -79,17 +82,35 @@ public class Main
 		
 		if (null == reader) usage();
 		
-		LinkedList<Translate.Frag> frags = null;
-
+		// LinkedList<Translate.Frag> frags = null;
+		Absyn.Program parse = null;
 		try
 	    {
-			frags = new Parse.ReadFrags(reader).Program();
+			// frags = new Parse.ReadFrags(reader).Program();
+			parse = new MiniJavaParser(reader).Goal();
 	    }
 		catch (ParseException p)
 	    {
 			System.err.println(p.toString());
 			System.exit(-1);
 	    }
+
+		Semant.Main.checkerPhaseOne(parse, false);
+		if (Semant.Main.errorCount > 0)
+		{
+			System.err.println("Semantic errors.");
+			return;
+		}
+
+		Translate.Translate translate = new Translate.Translate(new Riscv.RiscvFrame());
+		parse.accept(translate);
+
+		LinkedList<Translate.Frag> frags = new LinkedList<Translate.Frag>();
+		for (Object o : translate.results())
+		{
+			frags.add((Translate.Frag) o);
+		}
+
 
 		PrintWriter writer = new PrintWriter(System.out);
 		
