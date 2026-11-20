@@ -6,9 +6,9 @@ import java.util.LinkedList;
 import Temp.*;
 import Tree.*;
 
-public class Codegen implements Tree.CodeVisitor{
+public class CodeGen implements Tree.CodeVisitor{
     Frame frame;
-    public Codegen(Frame f) {frame=f;}
+    public CodeGen(Frame f) {frame=f;}
 
     private LinkedList<Assem.Instr> ilist = new LinkedList<Assem.Instr>();
     private void emit(Assem.Instr inst) {ilist.add(inst);}
