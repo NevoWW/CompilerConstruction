@@ -183,7 +183,32 @@ public class Codegen implements Tree.CodeVisitor{
     }
 
     public Temp visit(CALL n){
-        return null;
+        Temp t = new Temp();
+        for(Exp e : n.args){
+            int count = 0;
+            t = new Temp();
+            Temp exp = munchExp(e);
+
+            if(!(count <= 8)){
+                count++;
+                emit(new Assem.OPER("mv Rd, Rs", L(t), L(exp), null));
+            }else{
+
+                emit(new Assem.OPER("sw Rs, " + "(Rd)", null, L(exp), null));
+                                //find the offset and add it there
+            }
+
+        }
+        if(n.func instanceof NAME){
+            NAME funcs = (NAME)n.func;
+            emit(new Assem.OPER("call " + funcs.label,  null, null, labels(funcs.label)));
+            return t;
+        }else{
+            Temp src = munchExp(n.func);
+            emit(new Assem.OPER("jalr Rs ", null, L(src), null));
+            return t;
+
+        }
     }
 
     public Temp visit(ESEQ n){
