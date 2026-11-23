@@ -1,6 +1,19 @@
 /* Copyright (C) 2009, Dennis Brylow
  * All rights reserved.  */
 
+/**
+ * Implements translation of abstract syntax expressions
+ * into intermediate trees.
+ */
+
+/**
+ * COSC 4400 - Project #7
+ * Scanner accepts input from user
+ * @authors [Aleksandro Zhaka, Christian Guzman ]
+ * Instructor [Dennis Brylow]
+ * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, christian.guzmanrivas@marquette.edu]
+ */
+
 package Assem;
 import java.util.Iterator;
 
@@ -13,6 +26,19 @@ import java.util.List;
 import java.util.LinkedList;
 
 import Parse.*;
+
+/**
+ * Implements translation of abstract syntax expressions
+ * into intermediate trees.
+ */
+
+/**
+ * COSC 4400 - Project #7
+ * Scanner accepts input from user
+ * @authors [Aleksandro Zhaka, Christian Guzman ]
+ * Instructor [Dennis Brylow]
+ * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, christian.guzmanrivas@marquette.edu]
+ */
 
 public class Main 
 {

@@ -1,10 +1,49 @@
+/**
+ * Implements translation of abstract syntax expressions
+ * into intermediate trees.
+ */
+
+/**
+ * COSC 4400 - Project #7
+ * Scanner accepts input from user
+ * @authors [Aleksandro Zhaka, Christian Guzman ]
+ * Instructor [Dennis Brylow]
+ * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, christian.guzmanrivas@marquette.edu]
+ */
 package Riscv;
+
+/**
+ * Implements translation of abstract syntax expressions
+ * into intermediate trees.
+ */
+
+/**
+ * COSC 4400 - Project #8
+ * Scanner accepts input from user
+ * @authors [Aleksandro Zhaka, Christian Guzman ]
+ * Instructor [Dennis Brylow]
+ * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, christian.guzmanrivas@marquette.edu]
+ */
 
 import Frame.Frame;
 import Assem.Instr;
 import java.util.LinkedList;
 import Temp.*;
 import Tree.*;
+
+
+/**
+ * Implements translation of abstract syntax expressions
+ * into intermediate trees.
+ */
+
+/**
+ * COSC 4400 - Project #7
+ * Scanner accepts input from user
+ * @authors [Aleksandro Zhaka, Christian Guzman ]
+ * Instructor [Dennis Brylow]
+ * TA-BOT:MAILTO [aleksandro.zhaka@marquette.edu, christian.guzmanrivas@marquette.edu]
+ */
 
 public class CodeGen implements Tree.CodeVisitor{
     Frame frame;
